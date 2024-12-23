@@ -1,0 +1,3 @@
+class Zone {
+    name: string;
+}
