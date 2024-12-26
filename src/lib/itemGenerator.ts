@@ -35,16 +35,10 @@ function generateRarity(itemRarity: number): Rarity {
     return Rarity.Unique;
 }
 
-function selectBase(areaLevel: number): Item {
-    const random = Math.random();
-    let bases: Item[] = [];
-    if (random < .33) bases = armorBases;
-    else if (random < .66) bases = jewelleryBases;
-    else bases = weaponBases;
-
+function selectBase(pool: Item[], areaLevel: number): Item {
     //Select the top 3 bases with the highest level requirement 
     //not greater than the area level by 2
-    const filteredBases = bases.filter(base => base.levelRequirement <= areaLevel + 2);
+    const filteredBases = pool.filter(base => base.levelRequirement <= areaLevel + 2);
     const top3Bases = filteredBases.slice(0, 3);
     const randomBase = top3Bases[Math.floor(Math.random() * top3Bases.length)];
     return randomBase;
@@ -74,13 +68,16 @@ function addAffix(item: Item) {
     item.affixes.push(selectedAffix);
 }
 
-function generateItem(itemRarity: Rarity, areaLevel: number): Item {
+function generateItem(itemRarity: Rarity, areaLevel: number, type: ItemType | null): Item {
     const generatedRarity: Rarity = generateRarity(itemRarity);
-    console.log(generatedRarity)
 
     if (generatedRarity === Rarity.Unique) {
         return new Item({type: ItemType.BodyArmor}); // TODO: Generate unique item
     } else {
+        let pool: Item[] = [];
+        switch (type) {
+            case ItemType.BodyArmor:
+                pool = armorBases;
         let item = selectBase(areaLevel);
         let numAffixes;
         switch (generatedRarity) {

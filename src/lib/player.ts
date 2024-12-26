@@ -1,6 +1,15 @@
 import type { Item } from "./item";
+import {v4 as uuidv4} from 'uuid';
+import { baseClasses, BaseClass } from "./constants/classes";
+import { generateItem } from "./itemGenerator";
 class Player {
+    id: string = uuidv4();
+
     name: string;
+    class: BaseClass;
+
+    level: number;
+    experience: number;
 
     //Stats
     dexterity: number;
@@ -31,4 +40,15 @@ class Player {
 
 }
 
-export { Player };
+function generateRandomPlayer(): Player {
+    let player = new Player();
+    player.name = "Player";
+    player.class = baseClasses[Math.floor(Math.random() * baseClasses.length)];
+
+    player.level = 1;
+    player.experience = 0;
+
+    return player;
+}
+
+export { Player, generateRandomPlayer };

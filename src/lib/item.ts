@@ -9,9 +9,11 @@ class Item {
     affixes: Array<Affix>;
     implicit: Affix;
 
+    /**
+     * The type of the item, which determines its category such as weapon, armor, etc.
+     */
     type: ItemType;
 
-    //Stats
     energyShield: number;
     evasion: number;
     armor: number;
@@ -32,6 +34,9 @@ class Item {
 
     criticalHitChance: number;
 
+    /**
+     * Effects to be applied to the player when the item is equipped
+     */
     playerEffect: Array<(Player) => void> = [];
 
     //Requirements
