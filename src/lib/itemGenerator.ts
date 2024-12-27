@@ -75,10 +75,18 @@ function generateItem(itemRarity: Rarity, areaLevel: number, type: ItemType | nu
         return new Item({type: ItemType.BodyArmor}); // TODO: Generate unique item
     } else {
         let pool: Item[] = [];
-        switch (type) {
-            case ItemType.BodyArmor:
-                pool = armorBases;
-        let item = selectBase(areaLevel);
+        if (type != null) {
+            if (type === ItemType.BodyArmor || type === ItemType.Helmet || type === ItemType.Boots || type === ItemType.Gloves) {
+                pool = armorBases.filter(base => base.type === type);
+            } else if (type === ItemType.Ring || type === ItemType.Amulet || type === ItemType.Belt) {
+                pool = jewelleryBases.filter(base => base.type === type);
+            } else {
+                pool = weaponBases;
+            }
+        } else {
+            pool = armorBases.concat(jewelleryBases).concat(weaponBases);
+        }
+        let item = selectBase(pool, areaLevel);
         let numAffixes;
         switch (generatedRarity) {
             case Rarity.Normal:

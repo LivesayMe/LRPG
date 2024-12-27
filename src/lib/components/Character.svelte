@@ -10,7 +10,7 @@
         <div class="flex flex-col">
             <div>{character.name}</div>
             <div>{character.level}</div>
-            <div>{character.class}</div>
+            <div>{character.class.name}</div>
         </div>
 
         <!-- Gear -->
