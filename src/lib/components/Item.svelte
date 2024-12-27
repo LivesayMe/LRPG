@@ -4,6 +4,9 @@
 
     export let item: Item;
 
+    export let height: string = "h-fit";
+    export let width: string = "w-40";
+
     const rarityColor = (item: Item) => {
         if (!item) return "";
         const rarity = item.rarity;
@@ -24,7 +27,7 @@
     });
 </script>
 
-<div class={rarityColor(item) + " w-40 card p-2"}>
+<div class={rarityColor(item) + " card p-2" + " " + height + " " + width}>
     {#if item}
         <div class="flex flex-col">
             {item.name}

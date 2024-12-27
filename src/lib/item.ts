@@ -18,11 +18,6 @@ class Item {
     evasion: number;
     armor: number;
 
-    coldResistance: number;
-    fireResistance: number; 
-    lightningResistance: number;
-    chaosResistance: number;
-
     physicalAttack: Roll;
     fireAttack: Roll;
     coldAttack: Roll;

@@ -276,7 +276,7 @@ const jewelleryBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.coldResistance += 30
+                item.playerEffect.push((player: Player) => {player.coldResistance += 30})
             },
             friendlyName: () => "+30 Cold Resistance",
             itemRestriction: [ItemType.Ring],
@@ -291,7 +291,7 @@ const jewelleryBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.lightningResistance += 30
+                item.playerEffect.push((player: Player) => {player.lightningResistance += 30})
             },
             friendlyName: () => "+30 Lightning Resistance",
             itemRestriction: [ItemType.Ring],
@@ -306,7 +306,7 @@ const jewelleryBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.fireResistance += 30
+                item.playerEffect.push((player: Player) => {player.fireResistance += 30})
             },
             friendlyName: () => "+30 Fire Resistance",
             itemRestriction: [ItemType.Ring],
@@ -321,7 +321,7 @@ const jewelleryBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.chaosResistance += 30
+                item.playerEffect.push((player: Player) => {player.chaosResistance += 30})
             },
             friendlyName: () => "+30 Chaos Resistance",
             itemRestriction: [ItemType.Ring],

@@ -29,6 +29,11 @@ class Player {
 
     movementSpeed: number = 1.0;
 
+    coldResistance: number = 0;
+    fireResistance: number = 0;
+    lightningResistance: number = 0;
+    chaosResistance: number = 0;
+
     //Gear
     helmet: Item;
     body_armor: Item;
@@ -41,8 +46,7 @@ class Player {
     weapon1: Item;
     weapon2: Item;
 
-
-    applyItems() {
+    resetStats() {
         //Reset stats to base values
         this.dexterity = 5;
         this.strength = 5;
@@ -54,6 +58,14 @@ class Player {
         this.maxEnergyShield = 0;
         this.energyShield = 0;
         this.movementSpeed = 1.0;
+        this.coldResistance = 0;
+        this.fireResistance = 0;
+        this.lightningResistance = 0;
+        this.chaosResistance = 0;
+    }
+
+    applyItems() {
+        this.resetStats();
 
         if (this.helmet != null && this.helmet.playerEffect != null)
             this.helmet.playerEffect.forEach(effect => effect(this));
@@ -87,21 +99,21 @@ class Player {
     }
 
     getEvasion() {
-        return this.helmet.evasion + this.body_armor.evasion + this.boots.evasion +
-               this.ring1.evasion + this.ring2.evasion + this.amulet.evasion + 
-               this.belt.evasion;
+        return (this.helmet?.evasion ?? 0) + (this.body_armor?.evasion ?? 0) + (this.boots?.evasion ?? 0) +
+               (this.ring1?.evasion ?? 0) + (this.ring2?.evasion ?? 0) + (this.amulet?.evasion ?? 0) + 
+               (this.belt?.evasion ?? 0);
     }
 
     getArmor() {
-        return this.helmet.armor + this.body_armor.armor + this.boots.armor +
-               this.ring1.armor + this.ring2.armor + this.amulet.armor + 
-               this.belt.armor;
+        return (this.helmet?.armor ?? 0) + (this.body_armor?.armor ?? 0) + (this.boots?.armor ?? 0) +
+               (this.ring1?.armor ?? 0) + (this.ring2?.armor ?? 0) + (this.amulet?.armor ?? 0) + 
+               (this.belt?.armor ?? 0);
     }
 
     getMaxEnergyShield() {
-        return this.helmet.energyShield + this.body_armor.energyShield + this.boots.energyShield +
-               this.ring1.energyShield + this.ring2.energyShield + this.amulet.energyShield + 
-               this.belt.energyShield;
+        return (this.helmet?.energyShield ?? 0) + (this.body_armor?.energyShield ?? 0) + (this.boots?.energyShield ?? 0) +
+               (this.ring1?.energyShield ?? 0) + (this.ring2?.energyShield ?? 0) + (this.amulet?.energyShield ?? 0) + 
+               (this.belt?.energyShield ?? 0);
     }
 }
 
