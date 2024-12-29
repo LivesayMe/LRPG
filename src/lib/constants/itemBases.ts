@@ -269,7 +269,7 @@ const armorBases = [
     ...generateGloves(66),
 ]
 
-const jewelleryBases = [
+const ringBases = [
     new Item({
         name: "Saphire Ring",
         implicit: new Affix({
@@ -378,6 +378,42 @@ const jewelleryBases = [
     })
 ]
 
+const amuletBases = [
+    new Item({
+        name:"Jade Amulet",
+        implicit: new Affix({
+            maxTiers: 1,
+            priority: 0,
+            effect: (item: Item) => {
+                item.playerEffect.push((player: Player) => {player.dexterity += 30})
+            },
+            friendlyName: () => "+30 Dexterity",
+            itemRestriction: [ItemType.Amulet],
+            modWeight: 1000
+        }),
+        levelRequirement: 1,
+        type: ItemType.Amulet
+    })
+]
+
+const beltBases = [
+    new Item({
+        name: "Leather Belt",
+        implicit: new Affix({
+            maxTiers: 1,
+            priority: 0,
+            effect: (item: Item) => {
+                item.playerEffect.push((player: Player) => {player.maxHealth += 30})
+            },
+            friendlyName: () => "+30 Maximum Health",
+            itemRestriction: [ItemType.Belt],
+            modWeight: 1000
+        }),
+        levelRequirement: 1,
+        type: ItemType.Belt
+    })
+]
+
 const weaponBases = [
     new Item({
         name: "Short Sword",
@@ -388,5 +424,9 @@ const weaponBases = [
         baseAttackTime: 1.0,
     })
 ]
-
+const jewelleryBases = [
+    ...ringBases,
+    ...amuletBases,
+    ...beltBases
+]
 export { armorBases, jewelleryBases, weaponBases }

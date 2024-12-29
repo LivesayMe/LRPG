@@ -8,7 +8,7 @@
     const loadItems = () => {
         items = [];
         for (let i = 0; i < 10; i++) {
-            items.push(generateItem(0, 1));
+            items.push(generateItem(.5, 1));
         }
     }
 

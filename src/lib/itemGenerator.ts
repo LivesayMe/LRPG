@@ -68,9 +68,15 @@ function addAffix(item: Item) {
     item.affixes.push(selectedAffix);
 }
 
-function generateItem(itemRarity: Rarity, areaLevel: number, type: ItemType | null): Item {
+/**
+ * Generates an item
+ * @param itemRarity (Reasonable range is 0-1, beyond 4 common items become the least common type)
+ * @param areaLevel Determines the which bases can drop and their item level
+ * @param type An optional parameter to only generate items of a certain type
+ * @returns 
+ */
+function generateItem(itemRarity: number, areaLevel: number, type: ItemType | null): Item {
     const generatedRarity: Rarity = generateRarity(itemRarity);
-
     if (generatedRarity === Rarity.Unique) {
         return new Item({type: ItemType.BodyArmor}); // TODO: Generate unique item
     } else {
@@ -85,6 +91,9 @@ function generateItem(itemRarity: Rarity, areaLevel: number, type: ItemType | nu
             }
         } else {
             pool = armorBases.concat(jewelleryBases).concat(weaponBases);
+        }
+        if (pool.length === 0) {
+            throw "Item pool is empty for type " + ItemType[type ?? 0] + ", either the item base list is corrupted or the item type is invalid";
         }
         let item = selectBase(pool, areaLevel);
         let numAffixes;
