@@ -50,7 +50,7 @@ const statAffixes = [
         priority: 3, //Happens after percent modifiers
         effect: (item: Item, tier: number) => {
             item.playerEffect.push((player: Player) => {
-                player.maxEnergyShield *= 1.05 + tier * 0.10;
+                player.maxEnergyShield *= 1.05 + (tier * 0.10);
             })
         },
         friendlyName: (tier: number) => `+${(5 + tier * 10)}% Global Energy Shield`,

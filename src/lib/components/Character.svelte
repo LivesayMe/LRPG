@@ -38,15 +38,15 @@
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Energy Shield</div>
-                    <div>{character.getMaxEnergyShield()}</div>
+                    <div>{Math.round(character.maxEnergyShield * 100) / 100}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Armor</div>
-                    <div>{character.getArmor()}</div>
+                    <div>{Math.round(character.armor * 100) / 100}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Evasion Rating</div>
-                    <div>{character.getEvasion()}</div>
+                    <div>{Math.round(character.evasion * 100) / 100}</div>
                 </div>
             </div>
             <div class="flex flex-col w-1/2 p-2 gap-2">

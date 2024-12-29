@@ -13,6 +13,10 @@ class Player {
     level: number = 1;
     experience: number = 0;
 
+    //Defences
+    evasion: number = 0;
+    armor: number = 0;
+
     //Stats
     dexterity: number = 5;
     strength: number = 5;
@@ -62,10 +66,19 @@ class Player {
         this.fireResistance = 0;
         this.lightningResistance = 0;
         this.chaosResistance = 0;
+
+        this.evasion = 0;
+        this.armor = 0;
     }
 
     applyItems() {
         this.resetStats();
+
+        this.evasion = this.getEvasion();
+        this.armor = this.getArmor();        
+        this.maxEnergyShield = this.getMaxEnergyShield();
+        this.energyShield = this.maxEnergyShield;
+        this.health = this.maxHealth;
 
         if (this.helmet != null && this.helmet.playerEffect != null)
             this.helmet.playerEffect.forEach(effect => effect(this));
@@ -131,13 +144,13 @@ function generateRandomPlayer(): Player {
     player.experience = 0;
 
     player.helmet = generateItem(.5, 1, ItemType.Helmet);
-    player.body_armor = generateItem(.5, 1, ItemType.BodyArmor);
-    player.boots = generateItem(.5, 1, ItemType.Boots);
-    player.ring1 = generateItem(.5, 1, ItemType.Ring);
-    player.ring2 = generateItem(.5, 1, ItemType.Ring);
-    player.amulet = generateItem(.5, 1, ItemType.Amulet);
-    player.belt = generateItem(.5, 1, ItemType.Belt);
-    player.weapon1 = generateItem(.5, 1, ItemType.Weapon);
+    // player.body_armor = generateItem(.5, 1, ItemType.BodyArmor);
+    // player.boots = generateItem(.5, 1, ItemType.Boots);
+    // player.ring1 = generateItem(.5, 1, ItemType.Ring);
+    // player.ring2 = generateItem(.5, 1, ItemType.Ring);
+    // player.amulet = generateItem(.5, 1, ItemType.Amulet);
+    // player.belt = generateItem(.5, 1, ItemType.Belt);
+    // player.weapon1 = generateItem(.5, 1, ItemType.Weapon);
 
     player.applyItems();
 

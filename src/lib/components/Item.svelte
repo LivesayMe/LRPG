@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { type Item, Rarity, ItemType } from '../item';
-    import { popup } from '@skeletonlabs/skeleton';
+    import { type Item, Rarity, ItemType, Affix } from '../item';
+    import { autoModeWatcher, popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from '@skeletonlabs/skeleton';
 
     export let item: Item;
@@ -12,7 +12,6 @@
     const rarityColor = (item: Item) => {
         if (!item) return "";
         const rarity = item.rarity;
-        console.log(Rarity[rarity]);
         switch (rarity) {
             case Rarity.Normal:
                 return "!bg-surface-200";
@@ -46,20 +45,20 @@
     <div class="card p-4 w-72">
         {#if item}
             <div class="flex flex-col">
-                <div>{Rarity[item.rarity]}</div>
+                <div>{item.id}</div>
                 {#if item.implicit}
                     <div>{item.implicit.friendlyName(0)}</div>
                 {/if}
                 {#if item.evasion > 0}
-                    <div>Evasion: {item.evasion}</div>
+                    <div>Evasion: {Math.round(item.evasion * 100) / 100} ({Math.round(item.baseEvasion * 100) / 100})</div>
                 {/if}
 
                 {#if item.armor > 0}
-                    <div>Armor: {item.armor}</div>
+                    <div>Armor: {Math.round(item.armor * 100) / 100} ({Math.round(item.baseArmor * 100) / 100})</div>
                 {/if}
 
                 {#if item.energyShield > 0}
-                    <div>Energy Shield: {item.energyShield}</div>
+                    <div>Energy Shield: {Math.round(item.energyShield * 100) / 100} ({Math.round(item.baseEnergyShield * 100) / 100})</div>
                 {/if}
 
                 {#if item.type == ItemType.Weapon}
@@ -86,7 +85,7 @@
 
             <div class="flex flex-col">
                 {#each item.affixes as affix}
-                    <div>{affix.friendlyName(affix.tier)}</div>
+                    <div>{affix.friendlyName(affix.tier)} | {affix.tier}</div>
                 {/each}
             </div>
         {/if}

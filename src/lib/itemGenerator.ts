@@ -120,6 +120,8 @@ function generateItem(itemRarity: number, areaLevel: number, type: ItemType | nu
             default:
                 break;
         }
+
+        item.applyAffixes();
         return item;
     }
 }

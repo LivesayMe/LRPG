@@ -16,8 +16,11 @@ class Item {
      */
     type: ItemType;
 
+    baseEnergyShield: number = 0;
     energyShield: number;
+    baseEvasion: number = 0;
     evasion: number;
+    baseArmor: number = 0;
     armor: number;
 
     physicalAttack: Roll = {min: 0, max: 0};
@@ -44,6 +47,11 @@ class Item {
     levelRequirement: number;
 
     applyAffixes() {
+        console.log("Applying affixes for item " + this.id);
+        this.evasion = this.baseEvasion;
+        this.armor = this.baseArmor;
+        this.energyShield = this.baseEnergyShield;
+
         for (const affix of this.affixes) {
             affix.effect(this, affix.tier);
         }
@@ -91,9 +99,9 @@ class Item {
 
         this.type = args.type;
 
-        this.energyShield = args.energyShield ?? 0;
-        this.evasion = args.evasion ?? 0;
-        this.armor = args.armor ?? 0;
+        this.baseEnergyShield = args.energyShield ?? 0;
+        this.baseEvasion = args.evasion ?? 0;
+        this.baseArmor = args.armor ?? 0;
 
         this.physicalAttack = args.physicalAttack ?? {min: 0, max: 0};
         this.fireAttack = args.fireAttack ?? {min: 0, max: 0};
