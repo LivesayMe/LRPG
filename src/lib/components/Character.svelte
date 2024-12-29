@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Item from "$lib/components/Item.svelte";
+    import Item from "./Item.svelte";
     import { onMount } from "svelte";
     import { type Player } from "../player";
     export let character: Player;

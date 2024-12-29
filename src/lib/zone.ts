@@ -4,6 +4,9 @@ class Zone {
     worldPosition: number[] = [0, 0];
     id: number;
     connectedZones: number[] = [];
+    expolration_status: ExplorationStatus = ExplorationStatus.UNEXPLORED;
+
+    hover: boolean = false;
 
     constructor(name: string, worldPosition: number[]) {
         this.name = name;
@@ -12,6 +15,15 @@ class Zone {
     }
 
     addAdjacentZone(zoneId: number) {
+        if (this.connectedZones.includes(zoneId)) return;
         this.connectedZones.push(zoneId);
     }
 }
+
+enum ExplorationStatus {
+    UNEXPLORED,
+    PARTIALLY_EXPLORED,
+    FULLY_EXPLORED
+}
+
+export { Zone, ExplorationStatus };

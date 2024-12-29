@@ -23,7 +23,7 @@
     }
 
     onMount(() => {
-        console.log(item);
+
     });
 </script>
 
@@ -72,6 +72,6 @@
             {/each}
         </div>
     {:else}
-        Loading
+        <div></div>
     {/if}
 </div>
