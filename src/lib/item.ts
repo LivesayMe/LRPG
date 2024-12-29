@@ -43,6 +43,12 @@ class Item {
 
     levelRequirement: number;
 
+    applyAffixes() {
+        for (const affix of this.affixes) {
+            affix.effect(this, affix.tier);
+        }
+    }
+
     constructor(args: {
         name?: string;
         rarity?: Rarity;

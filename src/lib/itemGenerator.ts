@@ -78,7 +78,7 @@ function addAffix(item: Item) {
 function generateItem(itemRarity: number, areaLevel: number, type: ItemType | null): Item {
     const generatedRarity: Rarity = generateRarity(itemRarity);
     if (generatedRarity === Rarity.Unique) {
-        return new Item({type: ItemType.BodyArmor}); // TODO: Generate unique item
+        return new Item({type: ItemType.BodyArmor, rarity: Rarity.Unique}); // TODO: Generate unique item
     } else {
         let pool: Item[] = [];
         if (type != null) {
@@ -102,6 +102,7 @@ function generateItem(itemRarity: number, areaLevel: number, type: ItemType | nu
                 break;
             case Rarity.Magic:
                 //1-2
+                item.rarity = Rarity.Magic;
                 numAffixes = Math.floor(Math.random() * 2) + 1;
                 for (let i = 0; i < numAffixes; i++) {
                     addAffix(item);
@@ -109,6 +110,7 @@ function generateItem(itemRarity: number, areaLevel: number, type: ItemType | nu
                 break;
             case Rarity.Rare:
                 //4-6
+                item.rarity = Rarity.Rare;
                 numAffixes = Math.floor(Math.random() * 3) + 4;
                 for (let i = 0; i < numAffixes; i++) {
                     addAffix(item);

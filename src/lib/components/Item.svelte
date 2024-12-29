@@ -12,15 +12,16 @@
     const rarityColor = (item: Item) => {
         if (!item) return "";
         const rarity = item.rarity;
+        console.log(Rarity[rarity]);
         switch (rarity) {
             case Rarity.Normal:
-                return "bg-surface-200";
+                return "!bg-surface-200";
             case Rarity.Magic:
-                return "bg-surface-300";
+                return "!bg-blue-300";
             case Rarity.Rare:
-                return "bg-surface-400";
+                return "!bg-yellow-400";
             case Rarity.Unique:
-                return "bg-surface-500";
+                return "!bg-orange-500";
         }
     }
 </script>
@@ -45,6 +46,7 @@
     <div class="card p-4 w-72">
         {#if item}
             <div class="flex flex-col">
+                <div>{Rarity[item.rarity]}</div>
                 {#if item.implicit}
                     <div>{item.implicit.friendlyName(0)}</div>
                 {/if}
