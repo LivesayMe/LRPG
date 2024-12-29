@@ -3,7 +3,6 @@
     import { onMount } from "svelte";
     import { type Player } from "../player";
     export let character: Player;
-    $: console.log(character);
 
     function truncateName(name: string): string {
         return name.length > 10 ? name.slice(0, 10) + "..." : name;
@@ -14,6 +13,10 @@
         { name: "Cleave", level: 1 },
         { name: "Lightning Bolt", level: 1 },
     ]
+
+    onMount(() => {
+        console.log(character);
+    })
 </script>
 
 {#if !character}    

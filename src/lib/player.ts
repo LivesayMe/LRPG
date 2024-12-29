@@ -117,9 +117,14 @@ class Player {
     }
 }
 
+
+const randomPlayerNames = [
+    "Naruto", "Sasuke", "Kakashi", "Sakura", "Itachi", "Kisame", "Sakura", "Kakashi", "Kakashi", "Sasuke",
+]
+
 function generateRandomPlayer(): Player {
     let player = new Player();
-    player.name = "Player";
+    player.name = randomPlayerNames[Math.floor(Math.random() * randomPlayerNames.length)];
     player.class = baseClasses[Math.floor(Math.random() * baseClasses.length)];
 
     player.level = 1;

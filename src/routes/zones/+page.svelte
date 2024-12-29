@@ -6,7 +6,10 @@
     
 
     
-    let characters = [generateRandomPlayer()]
+    let characters = [generateRandomPlayer(), 
+                        generateRandomPlayer(),
+                        generateRandomPlayer()
+                    ];
     let selectedCharacterId = characters[0].id
 </script>
 
@@ -15,13 +18,13 @@
         <World/>
     </div>
 
-    <div class="flex flex-col w-96 h-full bg-surface-500 border-l-2">
-        <TabGroup regionlist="flex-wrap">
+    <div class="flex flex-col w-96 h-full bg-surface-500 border-l-2 overflow-y-hidden">
+        <TabGroup regionList="flex-wrap" regionPanel="overflow-y-auto h-[calc(100vh-140px)]">
             {#each characters as character}
                 <Tab bind:group={selectedCharacterId} name={character.id} value={character.id}>{character.name}</Tab>
             {/each}
             <svelte:fragment slot="panel">
-                <Character character={characters[0]} />
+                <Character character={characters.find(c => c.id === selectedCharacterId)} />
             </svelte:fragment>
         </TabGroup>
     </div>

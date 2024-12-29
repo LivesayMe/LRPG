@@ -1,8 +1,10 @@
 import { generateName } from "./constants/itemNames";
 import {type Player} from "./player";
 
+let itemCount = 0;
 class Item {
     name: string;
+    id: number;
     rarity: Rarity;
     description: string;
 
@@ -18,11 +20,11 @@ class Item {
     evasion: number;
     armor: number;
 
-    physicalAttack: Roll;
-    fireAttack: Roll;
-    coldAttack: Roll;
-    lightningAttack: Roll;
-    chaosAttack: Roll;
+    physicalAttack: Roll = {min: 0, max: 0};
+    fireAttack: Roll = {min: 0, max: 0};
+    coldAttack: Roll = {min: 0, max: 0};
+    lightningAttack: Roll = {min: 0, max: 0};
+    chaosAttack: Roll = {min: 0, max: 0};
 
     baseAttackTime: number;
     attackSpeed: number;
@@ -65,6 +67,7 @@ class Item {
         attackSpeed?: number
     }) {
         this.name = args.name ?? generateName();
+        this.id = itemCount++;
         this.rarity = args.rarity ?? Rarity.Normal;
         this.description = args.description ?? "";
 
@@ -77,6 +80,8 @@ class Item {
             itemRestriction: [],
             modWeight: 0
         });
+
+        this.implicit.effect(this, 0);
 
         this.type = args.type;
 

@@ -107,14 +107,6 @@
     function drawPath(from: Zone, to: Zone, ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
 
-        // const normalized = [from.worldPosition[0] - to.worldPosition[0], from.worldPosition[1] - to.worldPosition[1]];
-        // const length = Math.sqrt(normalized[0] * normalized[0] + normalized[1] * normalized[1]);
-        // const normalizedLength = [normalized[0] / length, normalized[1] / length];
-        // const offset = [normalizedLength[1], -normalizedLength[0]];
-
-        // ctx.moveTo(from.worldPosition[0] + offset[0] * zoneRadius, from.worldPosition[1] + offset[1] * zoneRadius);
-        // ctx.lineTo(to.worldPosition[0] + offset[0] * zoneRadius, to.worldPosition[1] + offset[1] * zoneRadius);
-
         ctx.moveTo(from.worldPosition[0], from.worldPosition[1]);
         ctx.lineTo(to.worldPosition[0], to.worldPosition[1]);
 
@@ -202,5 +194,5 @@
 </script>
 
 <div class="w-full h-full flex justify-center">
-    <canvas bind:this={canvas} class="w-full h-full border-2 rounded" width="1000" height="1000" on:mousemove={canvasHover}></canvas>
+    <canvas bind:this={canvas} class="w-full h-full" width="1000" height="1000" on:mousemove={canvasHover}></canvas>
 </div>
