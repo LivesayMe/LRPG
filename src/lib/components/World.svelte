@@ -7,7 +7,7 @@
 
     let canvas: HTMLCanvasElement;
 
-    const zoneRadius = 10;
+    const zoneRadius = 20;
 
     function hasCycle(edges: number[][]): boolean {
         // Helper function to find the root of a node using path compression
@@ -184,25 +184,23 @@
 
             if (distance < zoneRadius) {
                 zone.hover = true;
-                
+                rerender();
+
+                //Un-hover the remaining zones
+                for (let j = i+1; j < zones.length; j++) {
+                    zones[j].hover = false;
+                }
                 break;
             } else {
                 zone.hover = false;
             }
         }
-
         rerender();
-
-        const ctx = canvas.getContext("2d");
-        ctx.beginPath();
-        ctx.arc(canvasX, canvasY, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = "red";
-        ctx.fill();
     }
 
     onMount(generateWorld);
 </script>
 
 <div class="w-full h-full flex justify-center">
-    <canvas bind:this={canvas} class="w-full h-full border-2 rounded p-10" width="1000" height="1000" on:mousemove={canvasHover}></canvas>
+    <canvas bind:this={canvas} class="w-full h-full border-2 rounded" width="1000" height="1000" on:mousemove={canvasHover}></canvas>
 </div>
