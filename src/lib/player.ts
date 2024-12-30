@@ -144,13 +144,13 @@ function generateRandomPlayer(): Player {
     player.experience = 0;
 
     player.helmet = generateItem(.5, 1, ItemType.Helmet);
-    // player.body_armor = generateItem(.5, 1, ItemType.BodyArmor);
-    // player.boots = generateItem(.5, 1, ItemType.Boots);
-    // player.ring1 = generateItem(.5, 1, ItemType.Ring);
-    // player.ring2 = generateItem(.5, 1, ItemType.Ring);
-    // player.amulet = generateItem(.5, 1, ItemType.Amulet);
-    // player.belt = generateItem(.5, 1, ItemType.Belt);
-    // player.weapon1 = generateItem(.5, 1, ItemType.Weapon);
+    player.body_armor = generateItem(.5, 1, ItemType.BodyArmor);
+    player.boots = generateItem(.5, 1, ItemType.Boots);
+    player.ring1 = generateItem(.5, 1, ItemType.Ring);
+    player.ring2 = generateItem(.5, 1, ItemType.Ring);
+    player.amulet = generateItem(.5, 1, ItemType.Amulet);
+    player.belt = generateItem(.5, 1, ItemType.Belt);
+    player.weapon1 = generateItem(.5, 1, ItemType.Weapon);
 
     player.applyItems();
 

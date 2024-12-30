@@ -1,13 +1,18 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Zone } from "../zone";
+    import { ExplorationStatus, Zone } from "../zone";
+    import ZoneView from "./ZoneView.svelte";
 
     let zones = [];
     let edges = [];
 
     let canvas: HTMLCanvasElement;
 
+    let zonePopupLocation: number[] = [0, 0];
+    let zoneHighlight: Zone = null;
+
     const zoneRadius = 20;
+    const worldPadding = 100;
 
     function hasCycle(edges: number[][]): boolean {
         // Helper function to find the root of a node using path compression
@@ -100,8 +105,18 @@
         //Draw circle (filled)
         ctx.beginPath();
         ctx.arc(zone.worldPosition[0], zone.worldPosition[1], zoneRadius, 0, 2 * Math.PI);
-        ctx.fillStyle = zone.hover ? "green" : "black";
+        
+        const baseZoneColor = zone.exploration_status == ExplorationStatus.UNDISCOVERED ? "black" : "white";
+        ctx.fillStyle = zone.hover ? "green" : baseZoneColor;
         ctx.fill();
+
+        if (zone.isLastZone) {
+            //Draw an additional square
+            ctx.beginPath();
+            ctx.rect(zone.worldPosition[0] - zoneRadius + 3, zone.worldPosition[1] - zoneRadius + 3, zoneRadius * 2 - 6, zoneRadius * 2 - 6);
+            // ctx.fillStyle = "red";
+            ctx.fill();
+        }
     }
 
     function drawPath(from: Zone, to: Zone, ctx: CanvasRenderingContext2D) {
@@ -118,10 +133,10 @@
         const ctx = canvas.getContext("2d");
 
         for (let i = 0; i < 10; i++) {
-            const location = [Math.floor(Math.random() * (1000-zoneRadius * 2)) + zoneRadius, 
-                              Math.floor(Math.random() * (1000-zoneRadius * 2)) + zoneRadius];
-            zones.push(new Zone("Zone " + i, location));
-            drawZone(zones[i], ctx);
+            const location = [Math.floor(Math.random() * (1000-zoneRadius * 2 - worldPadding)) + zoneRadius + worldPadding / 2, 
+                              Math.floor(Math.random() * (1000-zoneRadius * 2 - worldPadding)) + zoneRadius + worldPadding / 2];
+            zones.push(new Zone("Zone " + i, location, 0));
+            zones[i].exploration_status = ExplorationStatus.UNDISCOVERED;
         }
 
         //Construct minimum spanning tree of nodes
@@ -134,11 +149,33 @@
             const to = zones.find(zone => zone.id === edge[1]);
             from.addAdjacentZone(to.id);
             to.addAdjacentZone(from.id);
-
-            drawPath(from, to, ctx);
         }
 
+        //Pick a leaf node as the starting zone
+        const startingZone = zones.find(zone => zone.connectedZones.length === 1);
+        startingZone.level = 1;
+        startingZone.exploration_status = ExplorationStatus.UNEXPLORED;
+
+        //Walk the tree starting from the starting zone, assigning level to be the distance from the starting zone
+        const queue = [startingZone];
+        while (queue.length > 0) {
+            const zone = queue.shift();
+            for (let i = 0; i < zone.connectedZones.length; i++) {
+                const adjacentZone = zones.find(z => z.id === zone.connectedZones[i]);
+                if (adjacentZone.level === 0) {
+                    adjacentZone.level = zone.level + 1;
+                    queue.push(adjacentZone);
+                }
+            }
+        }
+
+        //The zone with the highest level is the last zone
+        const lastZone = zones.find(zone => zone.level === Math.max(...zones.map(zone => zone.level)));
+        lastZone.isLastZone = true;
+
         zones = zones
+
+        rerender();
     }
 
     function rerender() {
@@ -158,6 +195,12 @@
         }
     }
 
+    function hoverZone(zone: Zone, mousePosition: number[]) {
+        zone.hover = true;
+        zonePopupLocation = mousePosition;
+        zoneHighlight = zone;
+    }
+
     function canvasHover(e: MouseEvent) {
 
         //Get dimensions of canvas
@@ -170,12 +213,18 @@
         const canvasY = e.offsetY / canvasHeight * canvas.height;
 
         //Check if we are within a zone
+        let isHovering = false;
         for (let i = 0; i < zones.length; i++) {
             const zone = zones[i];
             const distance = Math.sqrt(Math.pow(canvasX - zone.worldPosition[0], 2) + Math.pow(canvasY - zone.worldPosition[1], 2));
 
             if (distance < zoneRadius) {
-                zone.hover = true;
+                //Convert zone coordinates to world coordinates
+                const zoneX = zone.worldPosition[0] / canvas.width * canvasWidth + zoneRadius;
+                const zoneY = zone.worldPosition[1] / canvas.height * canvasHeight;
+
+                hoverZone(zone, [zoneX, zoneY]);
+                isHovering = true;
                 rerender();
 
                 //Un-hover the remaining zones
@@ -187,6 +236,9 @@
                 zone.hover = false;
             }
         }
+        if (!isHovering) {
+            zonePopupLocation = [0, 0];
+        }
         rerender();
     }
 
@@ -195,4 +247,10 @@
 
 <div class="w-full h-full flex justify-center">
     <canvas bind:this={canvas} class="w-full h-full" width="1000" height="1000" on:mousemove={canvasHover}></canvas>
+
+    {#if zonePopupLocation[0] > 0 && zonePopupLocation[1] > 0}
+        <div class="absolute card p-2" style="left: {zonePopupLocation[0]}px; top: {zonePopupLocation[1] + 82}px">
+            <ZoneView zone={zoneHighlight} />
+        </div>
+    {/if}
 </div>

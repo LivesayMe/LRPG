@@ -41,8 +41,8 @@ function selectBase(pool: Item[], areaLevel: number): Item {
     const filteredBases = pool.filter(base => base.levelRequirement <= areaLevel + 2);
     const top3Bases = filteredBases.slice(0, 3);
     const randomBase = top3Bases[Math.floor(Math.random() * top3Bases.length)];
-    return randomBase;
-    
+    //Create deep copy of base
+    return randomBase.copy();
 }
 
 function addAffix(item: Item) {

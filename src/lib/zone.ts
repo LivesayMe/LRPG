@@ -4,13 +4,16 @@ class Zone {
     worldPosition: number[] = [0, 0];
     id: number;
     connectedZones: number[] = [];
-    expolration_status: ExplorationStatus = ExplorationStatus.UNEXPLORED;
+    exploration_status: ExplorationStatus = ExplorationStatus.UNEXPLORED;
+    level: number = 1;
 
     hover: boolean = false;
+    isLastZone: boolean = false;
 
-    constructor(name: string, worldPosition: number[]) {
+    constructor(name: string, worldPosition: number[], level: number) {
         this.name = name;
         this.worldPosition = worldPosition;
+        this.level = level
         this.id = zoneCount++;
     }
 
@@ -21,6 +24,7 @@ class Zone {
 }
 
 enum ExplorationStatus {
+    UNDISCOVERED,
     UNEXPLORED,
     PARTIALLY_EXPLORED,
     FULLY_EXPLORED

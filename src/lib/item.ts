@@ -47,14 +47,44 @@ class Item {
     levelRequirement: number;
 
     applyAffixes() {
-        console.log("Applying affixes for item " + this.id);
         this.evasion = this.baseEvasion;
         this.armor = this.baseArmor;
         this.energyShield = this.baseEnergyShield;
 
-        for (const affix of this.affixes) {
-            affix.effect(this, affix.tier);
+        //Sort affixes by priority
+        this.affixes.sort((a, b) => {
+            return b.priority - a.priority;
+        });
+
+        for (let i = 0; i < this.affixes.length; i++) {
+            this.affixes[i].effect(this, this.affixes[i].tier);
         }
+    }
+
+    copy(): Item {
+        return new Item({
+            name: this.name,
+            rarity: this.rarity,
+            description: this.description,
+            affixes: this.affixes,
+            implicit: this.implicit,
+            type: this.type,
+            energyShield: this.baseEnergyShield,
+            evasion: this.baseEvasion,
+            armor: this.baseArmor,
+            physicalAttack: this.physicalAttack,
+            fireAttack: this.fireAttack,
+            coldAttack: this.coldAttack,
+            lightningAttack: this.lightningAttack,
+            chaosAttack: this.chaosAttack,
+            criticalHitChance: this.criticalHitChance,
+            strengthRequirement: this.strengthRequirement,
+            dexterityRequirement: this.dexterityRequirement,
+            intelligenceRequirement: this.intelligenceRequirement,
+            levelRequirement: this.levelRequirement,
+            baseAttackTime: this.baseAttackTime,
+            attackSpeed: this.attackSpeed
+        });
     }
 
     constructor(args: {
