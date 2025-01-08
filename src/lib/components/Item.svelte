@@ -44,7 +44,7 @@
 <div data-popup={"popup" + (item?.id ?? 0)}>
     <div class="card p-4 w-72">
         {#if item}
-            <div class="flex flex-col">
+            <div class={"flex flex-col " + (item.affixes.length > 0 ? "mb-2 border-b-2 pb-2" : "")}>
                 <div>{item.id}</div>
                 {#if item.implicit}
                     <div>{item.implicit.friendlyName(0)}</div>
@@ -63,7 +63,7 @@
 
                 {#if item.type == ItemType.Weapon}
                     {#if item.physicalAttack.max > 0}
-                        <div>Physical Attack: {item.physicalAttack.min}-{item.physicalAttack.max}</div>
+                        <div>Physical Attack: {Math.round(item.physicalAttack.min * 10)/10}-{Math.round(item.physicalAttack.max * 10) / 10}</div>
                     {/if}
                     {#if item.fireAttack.max > 0}
                         <div>Fire Attack: {item.fireAttack.min}-{item.fireAttack.max}</div>
@@ -78,7 +78,7 @@
                         <div>Chaos Attack: {item.chaosAttack.min}-{item.chaosAttack.max}</div>
                     {/if}
 
-                    <div>Attacks per second {1000 / item.attackSpeed}</div>
+                    <div>Attacks per second {Math.round(10000 / item.attackSpeed) / 10}</div>
                 {/if}
             </div>
             

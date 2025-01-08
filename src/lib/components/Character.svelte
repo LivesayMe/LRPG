@@ -34,19 +34,19 @@
             <div class="flex flex-col w-1/2 p-2 border-r-2 border-white -mr-2 gap-2">
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Health</div>
-                    <div>{character.health}</div>
+                    <div>{Math.round(character.health*10)/10}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Energy Shield</div>
-                    <div>{Math.round(character.maxEnergyShield * 100) / 100}</div>
+                    <div>{Math.round(character.maxEnergyShield * 10) / 10}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Armor</div>
-                    <div>{Math.round(character.armor * 100) / 100}</div>
+                    <div>{Math.round(character.armor * 10) / 10}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Evasion Rating</div>
-                    <div>{Math.round(character.evasion * 100) / 100}</div>
+                    <div>{Math.round(character.evasion * 10) / 10}</div>
                 </div>
             </div>
             <div class="flex flex-col w-1/2 p-2 gap-2">
