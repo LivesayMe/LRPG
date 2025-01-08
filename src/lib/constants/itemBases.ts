@@ -421,7 +421,7 @@ const weaponBases = [
         levelRequirement: 1,
         strengthRequirement: 12,
         type: ItemType.Weapon,
-        baseAttackTime: 1.0,
+        baseAttackTime: 1000,
     })
 ]
 const jewelleryBases = [

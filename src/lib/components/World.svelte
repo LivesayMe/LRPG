@@ -1,105 +1,18 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, createEventDispatcher } from "svelte";
     import { ExplorationStatus, Zone } from "../zone";
     import ZoneView from "./ZoneView.svelte";
+    import { zoneRadius, worldPadding } from "../constants/rendering";
 
-    let zones = [];
-    let edges = [];
+    const dispatch = createEventDispatcher();
+
+    export let zones = [];
+    export let edges = [];
 
     let canvas: HTMLCanvasElement;
 
     let zonePopupLocation: number[] = [0, 0];
     let zoneHighlight: Zone = null;
-
-    const zoneRadius = 20;
-    const worldPadding = 100;
-
-    function hasCycle(edges: number[][]): boolean {
-        // Helper function to find the root of a node using path compression
-        function find(parent: number[], node: number): number {
-            if (parent[node] !== node) {
-                parent[node] = find(parent, parent[node]); // Path compression
-            }
-            return parent[node];
-        }
-
-        // Helper function to union two sets
-        function union(parent: number[], rank: number[], node1: number, node2: number): boolean {
-            const root1 = find(parent, node1);
-            const root2 = find(parent, node2);
-
-            if (root1 === root2) {
-                return false; // Cycle detected
-            }
-
-            // Union by rank
-            if (rank[root1] > rank[root2]) {
-                parent[root2] = root1;
-            } else if (rank[root1] < rank[root2]) {
-                parent[root1] = root2;
-            } else {
-                parent[root2] = root1;
-                rank[root1]++;
-            }
-            return true;
-        }
-
-        // Extract the number of nodes from the edges
-        const nodes = new Set<number>();
-        for (const [start, end] of edges) {
-            nodes.add(start);
-            nodes.add(end);
-        }
-
-        // Initialize Union-Find structures
-        const parent: number[] = [];
-        const rank: number[] = [];
-        for (const node of nodes) {
-            parent[node] = node;
-            rank[node] = 0;
-        }
-
-        // Process each edge
-        for (const [start, end] of edges) {
-            if (!union(parent, rank, start, end)) {
-                return true; // Cycle detected
-            }
-        }
-
-        return false; // No cycle found
-    }
-
-    //Kruskal's algorithm
-    function mst(nodes: Zone[]): number[][] {
-        const distance = (a: number[], b: number[]) => {
-            return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-        }
-
-
-        const edges: number[][] = [];
-        for (let i = 0; i < nodes.length; i++) {
-            for (let j = i + 1; j < nodes.length; j++) {
-                if (i === j) continue;
-                edges.push([nodes[i].id, nodes[j].id, distance(nodes[i].worldPosition, nodes[j].worldPosition)]);
-            }
-        }
-
-        edges.sort((a: any, b: any) => {
-            return a[2] - b[2];
-        });
-
-        const mst: number[][] = [];
-
-        while (mst.length < nodes.length - 1) {
-            const edge = edges.shift();
-            if (!edge) break;
-            if (!hasCycle([...mst, edge])) {
-                mst.push(edge);
-            }
-        }
-
-        return mst;
-    }
 
     function drawZone(zone: Zone, ctx: CanvasRenderingContext2D) {
         //Draw circle (filled)
@@ -129,52 +42,7 @@
         ctx.stroke();
     }
 
-    function generateWorld() {
-        const ctx = canvas.getContext("2d");
-
-        for (let i = 0; i < 10; i++) {
-            const location = [Math.floor(Math.random() * (1000-zoneRadius * 2 - worldPadding)) + zoneRadius + worldPadding / 2, 
-                              Math.floor(Math.random() * (1000-zoneRadius * 2 - worldPadding)) + zoneRadius + worldPadding / 2];
-            zones.push(new Zone("Zone " + i, location, 0));
-            zones[i].exploration_status = ExplorationStatus.UNDISCOVERED;
-        }
-
-        //Construct minimum spanning tree of nodes
-        edges = mst(zones)
-
-        for (let i = 0; i < edges.length; i++) {
-            const edge = edges[i];
-
-            const from = zones.find(zone => zone.id === edge[0]);
-            const to = zones.find(zone => zone.id === edge[1]);
-            from.addAdjacentZone(to.id);
-            to.addAdjacentZone(from.id);
-        }
-
-        //Pick a leaf node as the starting zone
-        const startingZone = zones.find(zone => zone.connectedZones.length === 1);
-        startingZone.level = 1;
-        startingZone.exploration_status = ExplorationStatus.UNEXPLORED;
-
-        //Walk the tree starting from the starting zone, assigning level to be the distance from the starting zone
-        const queue = [startingZone];
-        while (queue.length > 0) {
-            const zone = queue.shift();
-            for (let i = 0; i < zone.connectedZones.length; i++) {
-                const adjacentZone = zones.find(z => z.id === zone.connectedZones[i]);
-                if (adjacentZone.level === 0) {
-                    adjacentZone.level = zone.level + 1;
-                    queue.push(adjacentZone);
-                }
-            }
-        }
-
-        //The zone with the highest level is the last zone
-        const lastZone = zones.find(zone => zone.level === Math.max(...zones.map(zone => zone.level)));
-        lastZone.isLastZone = true;
-
-        zones = zones
-
+    $: if (zones && edges && canvas) {
         rerender();
     }
 
@@ -241,8 +109,6 @@
         }
         rerender();
     }
-
-    onMount(generateWorld);
 </script>
 
 <div class="w-full h-full flex justify-center">
@@ -250,7 +116,7 @@
 
     {#if zonePopupLocation[0] > 0 && zonePopupLocation[1] > 0}
         <div class="absolute card p-2" style="left: {zonePopupLocation[0]}px; top: {zonePopupLocation[1] + 82}px">
-            <ZoneView zone={zoneHighlight} />
+            <ZoneView zone={zoneHighlight} on:zoneSelected={(e) => dispatch("zoneSelected", e.detail)}/>
         </div>
     {/if}
 </div>

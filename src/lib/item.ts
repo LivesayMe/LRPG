@@ -62,7 +62,7 @@ class Item {
     }
 
     copy(): Item {
-        return new Item({
+        const newItem = new Item({
             name: this.name,
             rarity: this.rarity,
             description: this.description,
@@ -83,8 +83,9 @@ class Item {
             intelligenceRequirement: this.intelligenceRequirement,
             levelRequirement: this.levelRequirement,
             baseAttackTime: this.baseAttackTime,
-            attackSpeed: this.attackSpeed
         });
+        newItem.applyAffixes();
+        return newItem;
     }
 
     constructor(args: {
@@ -108,7 +109,6 @@ class Item {
         intelligenceRequirement?: number;
         levelRequirement?: number,
         baseAttackTime?: number,
-        attackSpeed?: number
     }) {
         this.name = args.name ?? generateName();
         this.id = itemCount++;
@@ -147,7 +147,7 @@ class Item {
         this.levelRequirement = args.levelRequirement ?? 0;
 
         this.baseAttackTime = args.baseAttackTime ?? 0;
-        this.attackSpeed = args.attackSpeed ?? 1;
+        this.attackSpeed = this.baseAttackTime;
     }
 }
 

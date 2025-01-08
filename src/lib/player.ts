@@ -3,40 +3,28 @@ import {v4 as uuidv4} from 'uuid';
 import { baseClasses, BaseClass } from "./constants/classes";
 import { generateItem } from "./itemGenerator";
 import { Rarity, ItemType } from "./item";
+import { Entity } from "./entity";
+import { meleeSkills } from "./skill";
 
-class Player {
-    id: string = uuidv4();
+class Player extends Entity {
 
-    name: string;
     class: BaseClass;
-
-    level: number = 1;
     experience: number = 0;
 
-    //Defences
-    evasion: number = 0;
-    armor: number = 0;
 
     //Stats
     dexterity: number = 5;
     strength: number = 5;
     intelligence: number = 5;
 
-    maxHealth: number = 100;
-    health: number = 100;
-
     maxMana: number = 50;
     mana: number = 50;
 
-    maxEnergyShield: number = 0;
-    energyShield: number = 0;
-
     movementSpeed: number = 1.0;
 
-    coldResistance: number = 0;
-    fireResistance: number = 0;
-    lightningResistance: number = 0;
-    chaosResistance: number = 0;
+    esFromIntelligence = 1;
+    evasionFromDexterity = 1;
+    lifeFromStrength = 1;
 
     //Gear
     helmet: Item;
@@ -55,20 +43,15 @@ class Player {
         this.dexterity = 5;
         this.strength = 5;
         this.intelligence = 5;
-        this.maxHealth = 100;
-        this.health = 100;
         this.maxMana = 50;
         this.mana = 50;
-        this.maxEnergyShield = 0;
-        this.energyShield = 0;
         this.movementSpeed = 1.0;
-        this.coldResistance = 0;
-        this.fireResistance = 0;
-        this.lightningResistance = 0;
-        this.chaosResistance = 0;
 
-        this.evasion = 0;
-        this.armor = 0;
+        this.esFromIntelligence = 1;
+        this.evasionFromDexterity = 1;
+        this.lifeFromStrength = 1;
+
+        super.resetStats();
     }
 
     applyItems() {
@@ -77,8 +60,7 @@ class Player {
         this.evasion = this.getEvasion();
         this.armor = this.getArmor();        
         this.maxEnergyShield = this.getMaxEnergyShield();
-        this.energyShield = this.maxEnergyShield;
-        this.health = this.maxHealth;
+        
 
         if (this.helmet != null && this.helmet.playerEffect != null)
             this.helmet.playerEffect.forEach(effect => effect(this));
@@ -109,12 +91,16 @@ class Player {
 
         if (this.weapon2 != null && this.weapon2.playerEffect != null)
             this.weapon2.playerEffect.forEach(effect => effect(this));
+
+        this.energyShield = this.maxEnergyShield;
+        this.energyShieldRegen = this.maxEnergyShield / 10;
+        this.health = this.maxHealth;
     }
 
     getEvasion() {
         return (this.helmet?.evasion ?? 0) + (this.body_armor?.evasion ?? 0) + (this.boots?.evasion ?? 0) +
                (this.ring1?.evasion ?? 0) + (this.ring2?.evasion ?? 0) + (this.amulet?.evasion ?? 0) + 
-               (this.belt?.evasion ?? 0);
+               (this.belt?.evasion ?? 0) + this.evasionFromDexterity * this.dexterity;
     }
 
     getArmor() {
@@ -126,7 +112,25 @@ class Player {
     getMaxEnergyShield() {
         return (this.helmet?.energyShield ?? 0) + (this.body_armor?.energyShield ?? 0) + (this.boots?.energyShield ?? 0) +
                (this.ring1?.energyShield ?? 0) + (this.ring2?.energyShield ?? 0) + (this.amulet?.energyShield ?? 0) + 
-               (this.belt?.energyShield ?? 0);
+               (this.belt?.energyShield ?? 0) + this.intelligence * this.esFromIntelligence;
+    }
+
+    getMaxLife() {
+        return this.strength * this.lifeFromStrength + this.maxHealth;
+    }
+
+    /**
+     * Returns the time in ms between attacks
+     */
+    getAttackSpeed() {
+        if (!this.weapon1)
+            return 1000;
+
+        if (this.weapon2 != null && this.weapon2.type == ItemType.Weapon) {
+            // Dual wielding
+            return Math.min(this.weapon1.attackSpeed, this.weapon2.attackSpeed) * 1.35;
+        }
+        return this.weapon1.attackSpeed;
     }
 }
 
@@ -136,7 +140,7 @@ const randomPlayerNames = [
 ]
 
 function generateRandomPlayer(): Player {
-    let player = new Player();
+    let player = new Player({});
     player.name = randomPlayerNames[Math.floor(Math.random() * randomPlayerNames.length)];
     player.class = baseClasses[Math.floor(Math.random() * baseClasses.length)];
 
@@ -153,6 +157,8 @@ function generateRandomPlayer(): Player {
     player.weapon1 = generateItem(.5, 1, ItemType.Weapon);
 
     player.applyItems();
+
+    player.mainSkill = meleeSkills[Math.floor(Math.random() * meleeSkills.length)];
 
     return player;
 }

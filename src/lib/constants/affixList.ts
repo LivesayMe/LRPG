@@ -1,4 +1,4 @@
-import { Affix, ItemType, type Item} from "../item"
+import { Affix, ItemType, type Item} from "../item";
 import { type Player } from "../player";
 
 const armors = [ItemType.BodyArmor, ItemType.Helmet, ItemType.Boots, ItemType.Gloves];
@@ -119,6 +119,16 @@ const weaponAffixes = [
             item.criticalHitChance *= 1.05 + tier * 0.10;
         },
         friendlyName: (tier: number) => `+${(5 + tier * 10)}% Critical Hit Chance`,
+        itemRestriction: [ItemType.Weapon],
+        modWeight: 1000
+    }),
+    new Affix({ //Increased attack speed
+        maxTiers: 7,
+        priority: 3, //Happens after percent modifiers
+        effect: (item: Item, tier: number) => {
+            item.attackSpeed *= .95 - (tier * 0.05);
+        },
+        friendlyName: (tier: number) => `+${(5 + tier * 10)}% Attack Speed`,
         itemRestriction: [ItemType.Weapon],
         modWeight: 1000
     })

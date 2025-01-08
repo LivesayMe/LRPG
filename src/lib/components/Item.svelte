@@ -78,7 +78,7 @@
                         <div>Chaos Attack: {item.chaosAttack.min}-{item.chaosAttack.max}</div>
                     {/if}
 
-                    <div>Attacks per second {item.baseAttackTime / item.attackSpeed}</div>
+                    <div>Attacks per second {1000 / item.attackSpeed}</div>
                 {/if}
             </div>
             
