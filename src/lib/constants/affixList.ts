@@ -1,8 +1,10 @@
 import { Affix, ItemType, type Item} from "../item";
 import { type Player } from "../player";
+import { DamageType, Damage } from "../damage";
 
 const armors = [ItemType.BodyArmor, ItemType.Helmet, ItemType.Boots, ItemType.Gloves];
 const jewellery = [ItemType.Ring, ItemType.Amulet, ItemType.Belt];
+const weapons = [ItemType.Axe, ItemType.Bow, ItemType.Claw, ItemType.Dagger, ItemType.Mace, ItemType.Sceptre, ItemType.Stave, ItemType.Sword, ItemType.Wand];
 
 const statAffixes = [
     new Affix({ //Flat evasion
@@ -84,32 +86,30 @@ const weaponAffixes = [
         maxTiers: 7,
         priority: 1,
         effect: (item: Item, tier: number) => {
-            item.physicalAttack.min += 10 + tier * 20;
-            item.physicalAttack.max += 10 + tier * 20;
+            item.addDamage(10 + tier * 20, DamageType.PHYSICAL);
         },
         friendlyName: (tier: number) => `+${10 + tier * 20} Physical Attack`,
-        itemRestriction: [ItemType.Weapon],
+        itemRestriction: weapons,
         modWeight: 1000
     }),
     new Affix({ //Percent attack
         maxTiers: 7,
         priority: 2, //Happens after flat modifiers
         effect: (item: Item, tier: number) => {
-            item.physicalAttack.min *= 1.05 + tier * 0.10;
-            item.physicalAttack.max *= 1.05 + tier * 0.10;
+            item.addIncreasedDamage(1.05 + tier * 0.1, DamageType.PHYSICAL);
         },
         friendlyName: (tier: number) => `+${(5 + tier * 10)}% Physical Attack`,
-        itemRestriction: [ItemType.Weapon],
+        itemRestriction: weapons,
         modWeight: 1000
     }),
     new Affix({ //Flat critical hit chance
         maxTiers: 7,
         priority: 1,
         effect: (item: Item, tier: number) => {
-            item.criticalHitChance += 1 + tier * .05;
+            item.criticalHitChance += .01 + tier * .005;
         },
-        friendlyName: (tier: number) => `+${1 + tier * .05} Critical Hit Chance`,
-        itemRestriction: [ItemType.Weapon],
+        friendlyName: (tier: number) => `+${1 + tier * .05}% Critical Hit Chance`,
+        itemRestriction: weapons,
         modWeight: 1000
     }),
     new Affix({ //Percent critical hit chance
@@ -119,7 +119,7 @@ const weaponAffixes = [
             item.criticalHitChance *= 1.05 + tier * 0.10;
         },
         friendlyName: (tier: number) => `+${(5 + tier * 10)}% Critical Hit Chance`,
-        itemRestriction: [ItemType.Weapon],
+        itemRestriction: weapons,
         modWeight: 1000
     }),
     new Affix({ //Increased attack speed
@@ -128,11 +128,16 @@ const weaponAffixes = [
         effect: (item: Item, tier: number) => {
             item.attackSpeed *= .95 - (tier * 0.05);
         },
-        friendlyName: (tier: number) => `+${(5 + tier * 10)}% Attack Speed`,
-        itemRestriction: [ItemType.Weapon],
+        friendlyName: (tier: number) => `+${(5 + tier * 5)}% Attack Speed`,
+        itemRestriction: weapons,
         modWeight: 1000
     })
 ]
 
+function maxTier(itemLevel: number, affix: Affix) {
+    const levelsPerTier = 100 / affix.maxTiers;
+    return Math.floor(itemLevel / levelsPerTier);
+}
+
 const affixes = [...statAffixes, ...weaponAffixes];
-export { affixes };
+export { affixes, maxTier };

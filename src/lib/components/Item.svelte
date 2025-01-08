@@ -1,8 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { type Item, Rarity, ItemType, Affix } from '../item';
+    import { type Item, Rarity, ItemType, Affix, isWeapon } from '../item';
     import { autoModeWatcher, popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from '@skeletonlabs/skeleton';
+    import { DamageType } from '../damage';
 
     export let item: Item;
 
@@ -25,12 +26,14 @@
     }
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class={rarityColor(item) + " card p-2" + " " + height + " " + width +
             (item ? " cursor-pointer" : "")} use:popup={{
     event: 'hover',
     target: "popup" + (item?.id ?? -1),
     placement: 'left',
-}}>
+}} on:click={() => {console.log(item)}}>
     {#if item}
         <div class="flex flex-col">
             {item.name}
@@ -61,24 +64,26 @@
                     <div>Energy Shield: {Math.round(item.energyShield * 100) / 100} ({Math.round(item.baseEnergyShield * 100) / 100})</div>
                 {/if}
 
-                {#if item.type == ItemType.Weapon}
-                    {#if item.physicalAttack.max > 0}
-                        <div>Physical Attack: {Math.round(item.physicalAttack.min * 10)/10}-{Math.round(item.physicalAttack.max * 10) / 10}</div>
+                {#if isWeapon(item.type)}
+                    {#if item.damage.getDamage(DamageType.PHYSICAL) > 0}
+                        <div>Physical Attack: {Math.round(item.damage.getDamage(DamageType.PHYSICAL) * 10)/10}</div>
                     {/if}
-                    {#if item.fireAttack.max > 0}
-                        <div>Fire Attack: {item.fireAttack.min}-{item.fireAttack.max}</div>
+                    {#if item.damage.getDamage(DamageType.FIRE) > 0}
+                        <div>Fire Attack: {Math.round(item.damage.getDamage(DamageType.FIRE) * 10)/10}</div>
                     {/if}
-                    {#if item.coldAttack.max > 0}
-                        <div>Cold Attack: {item.coldAttack.min}-{item.coldAttack.max}</div>
+                    {#if item.damage.getDamage(DamageType.COLD) > 0}
+                        <div>Cold Attack: {Math.round(item.damage.getDamage(DamageType.COLD) * 10)/10}</div>
                     {/if}
-                    {#if item.lightningAttack.max > 0}
-                        <div>Lightning Attack: {item.lightningAttack.min}-{item.lightningAttack.max}</div>
+                    {#if item.damage.getDamage(DamageType.LIGHTNING) > 0}
+                        <div>Lightning Attack: {Math.round(item.damage.getDamage(DamageType.LIGHTNING) * 10)/10}</div>
                     {/if}
-                    {#if item.chaosAttack.max > 0}
-                        <div>Chaos Attack: {item.chaosAttack.min}-{item.chaosAttack.max}</div>
+                    {#if item.damage.getDamage(DamageType.CHAOS) > 0}
+                        <div>Chaos Attack: {Math.round(item.damage.getDamage(DamageType.CHAOS) * 10)/10}</div>
                     {/if}
 
                     <div>Attacks per second {Math.round(10000 / item.attackSpeed) / 10}</div>
+
+                    <div>Critical Hit Chance {Math.round(item.criticalHitChance * 1000)/10}%</div>
                 {/if}
             </div>
             

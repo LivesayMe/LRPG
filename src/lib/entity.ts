@@ -24,6 +24,8 @@ class Entity {
     chaosResistance: number;
 
     accuracyRating: number;
+    incCriticalHitChance: number = 1;
+    criticalHitMultiplier: number = 2;
 
     level: number = 1;
 
@@ -77,6 +79,11 @@ class Entity {
 
         this.id = entityCount++;
         this.energyShieldRegen = this.maxEnergyShield / 10;
+    }
+
+    fullHeal() {
+        this.energyShield = this.maxEnergyShield;
+        this.health = this.maxHealth;
     }
 
     resetStats() {
@@ -171,6 +178,13 @@ class Entity {
 
     getAttackSpeed() {
         return 1000;
+    }
+
+    getAttackDamage() {
+        return new Damage({
+            type: DamageType.PHYSICAL,
+            amount: 5,
+        })
     }
 
     attack(target: Entity): Damage | null {

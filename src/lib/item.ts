@@ -1,4 +1,5 @@
 import { generateName } from "./constants/itemNames";
+import { DamageType, Damage } from "./damage";
 import {type Player} from "./player";
 
 let itemCount = 0;
@@ -23,16 +24,14 @@ class Item {
     baseArmor: number = 0;
     armor: number;
 
-    physicalAttack: Roll = {min: 0, max: 0};
-    fireAttack: Roll = {min: 0, max: 0};
-    coldAttack: Roll = {min: 0, max: 0};
-    lightningAttack: Roll = {min: 0, max: 0};
-    chaosAttack: Roll = {min: 0, max: 0};
+    damage: Damage = new Damage({type: DamageType.PHYSICAL, amount: 0});
 
     baseAttackTime: number;
     attackSpeed: number;
 
     criticalHitChance: number;
+
+    level: number;
 
     /**
      * Effects to be applied to the player when the item is equipped
@@ -61,28 +60,42 @@ class Item {
         }
     }
 
+    addDamage(amount: number, type: DamageType) {
+        if (this.damage.dealt == null) this.damage.dealt = [];
+        //If damage type already exists, add the amount to it
+        const damage = this.damage.dealt.find((d) => d.type == type);
+        if (damage != null) damage.amount += amount;
+        else this.damage.dealt.push({ type: type, amount: amount });
+    }
+
+    addIncreasedDamage(amount: number, type: DamageType) {
+        if (this.damage.dealt == null) this.damage.dealt = [];
+        //If damage type already exists, increase the amount
+        const damage = this.damage.dealt.find((d) => d.type == type);
+        if (damage != null) damage.amount *= amount;
+        else this.damage.dealt.push({ type: type, amount: amount });
+    }
+
     copy(): Item {
+        const affixCopies = this.affixes.map((a) => a.copy());
         const newItem = new Item({
             name: this.name,
             rarity: this.rarity,
             description: this.description,
-            affixes: this.affixes,
+            affixes: affixCopies,
             implicit: this.implicit,
             type: this.type,
             energyShield: this.baseEnergyShield,
             evasion: this.baseEvasion,
             armor: this.baseArmor,
-            physicalAttack: this.physicalAttack,
-            fireAttack: this.fireAttack,
-            coldAttack: this.coldAttack,
-            lightningAttack: this.lightningAttack,
-            chaosAttack: this.chaosAttack,
+            damage: this.damage.copy(),
             criticalHitChance: this.criticalHitChance,
             strengthRequirement: this.strengthRequirement,
             dexterityRequirement: this.dexterityRequirement,
             intelligenceRequirement: this.intelligenceRequirement,
             levelRequirement: this.levelRequirement,
             baseAttackTime: this.baseAttackTime,
+            level: this.level
         });
         newItem.applyAffixes();
         return newItem;
@@ -98,17 +111,14 @@ class Item {
         energyShield?: number;
         evasion?: number;
         armor?: number;
-        physicalAttack?: Roll;
-        fireAttack?: Roll;
-        coldAttack?: Roll;
-        lightningAttack?: Roll;
-        chaosAttack?: Roll;
+        damage?: Damage;
         criticalHitChance?: number;
         strengthRequirement?: number;
         dexterityRequirement?: number;
         intelligenceRequirement?: number;
         levelRequirement?: number,
         baseAttackTime?: number,
+        level?: number
     }) {
         this.name = args.name ?? generateName();
         this.id = itemCount++;
@@ -133,11 +143,7 @@ class Item {
         this.baseEvasion = args.evasion ?? 0;
         this.baseArmor = args.armor ?? 0;
 
-        this.physicalAttack = args.physicalAttack ?? {min: 0, max: 0};
-        this.fireAttack = args.fireAttack ?? {min: 0, max: 0};
-        this.coldAttack = args.coldAttack ?? {min: 0, max: 0};
-        this.lightningAttack = args.lightningAttack ?? {min: 0, max: 0};
-        this.chaosAttack = args.chaosAttack ?? {min: 0, max: 0};
+        this.damage = args.damage ?? new Damage({type: DamageType.PHYSICAL, amount: 0});
 
         this.criticalHitChance = args.criticalHitChance ?? 0;
 
@@ -148,12 +154,9 @@ class Item {
 
         this.baseAttackTime = args.baseAttackTime ?? 0;
         this.attackSpeed = this.baseAttackTime;
-    }
-}
 
-class Roll {
-    min: number;
-    max: number;
+        this.level = args.level ?? 1;
+    }
 }
 
 let affixCount = 0;
@@ -181,6 +184,17 @@ class Affix {
         this.modWeight = args.modWeight;
         this.id = affixCount++;
     }
+
+    copy(): Affix {
+        return new Affix({
+            maxTiers: this.maxTiers,
+            priority: this.priority,
+            effect: this.effect,
+            friendlyName: this.friendlyName,
+            itemRestriction: this.itemRestriction,
+            modWeight: this.modWeight,
+        });
+    }
 }
 
 enum Rarity {
@@ -194,11 +208,31 @@ enum ItemType {
     BodyArmor,
     Helmet,
     Boots,
-    Belt,
     Gloves,
     Ring,
+    Belt,
     Amulet,
-    Weapon
+    Axe,
+    Bow,
+    Claw,
+    Dagger,
+    Mace,
+    Sceptre,
+    Stave,
+    Sword,
+    Wand
 }
 
-export { Item, Affix, Rarity, ItemType, Roll };
+function isWeapon(type: ItemType): boolean {
+    return type >= ItemType.Axe && type <= ItemType.Wand;
+}
+
+function isArmor(type: ItemType): boolean {
+    return type >= ItemType.BodyArmor && type <= ItemType.Gloves;
+}
+
+function isJewellery(type: ItemType): boolean {
+    return type >= ItemType.Ring && type <= ItemType.Amulet;
+}
+
+export { Item, Affix, Rarity, ItemType, isWeapon, isArmor, isJewellery };

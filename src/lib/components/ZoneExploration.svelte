@@ -11,9 +11,11 @@
     export let zone: Zone;
     export let activeCharacters: Player[];
 
-    let totalEnemies = 0;
-    let remainingWaves = 0;
-    let enemiesPerWave = 0;
+    const zoneLevel = zone.level;
+
+    let totalEnemies = enemyCount(zoneLevel);;
+    let remainingWaves = Math.min(totalEnemies, wavesPerZone);
+    let enemiesPerWave = Math.max(Math.floor(totalEnemies / remainingWaves), 1);
 
     let activeEnemies = [];
 
@@ -40,18 +42,21 @@
     }
 
     onMount(() => {
-        const zoneLevel = zone.level;
-        totalEnemies = enemyCount(zoneLevel);
+        
 
-        remainingWaves = Math.min(totalEnemies, wavesPerZone)
-        enemiesPerWave = Math.min(Math.floor(totalEnemies / remainingWaves), 1);
+        console.log("Enemies per wave", enemiesPerWave, "Remaining waves", remainingWaves, "Total enemies", totalEnemies);
 
         totalTravelTime = Math.min(...activeCharacters.map(character => character.movementSpeed)) * 3000;
 
         timer = setInterval(() => {
-            // TODO if all characters are downed show fail screen
+            if (activeCharacters.filter(character => !character.isDowned).length === 0) {
+                isFailed = true;
+                clearInterval(timer);
+                return;
+            }
             
             activeCharacters.forEach(character => {
+                if (character.isDowned) return;
                 character.timeSinceLastAttack += tickRate;
                 character.timeSinceLastDamage += tickRate;
 
@@ -142,10 +147,8 @@
     });
 
     $: if (activeEnemies.length === 0 && remainingWaves > 0 && !isTraveling) {
-        console.log("Traveling", totalTravelTime, travelTime);
         isTraveling = true;
         if (travelTimer != null) {
-            console.log("Somehow travel timer was not cleared");
             clearInterval(travelTimer);
         }
         travelTimer = setInterval(() => {
@@ -160,10 +163,13 @@
         }, tickRate);
     }
 
-    $: if (remainingWaves === 0 && activeEnemies.length === 0) {
+    $: if (remainingWaves === 0 && activeEnemies.length === 0 && !isFinished && !isFailed && !isTraveling) {
+        console.log("Finished");
         zone.exploration_status = ExplorationStatus.FULLY_EXPLORED;
         isFinished = true;
         clearInterval(timer);
+
+        dispatch('explored', zone);
     }
 </script>
 
@@ -188,4 +194,18 @@
             <EntityCard entity={enemy}/>
         {/each}
     </div>
+
+    {#if isFailed}
+        <div class="w-40 h-40 card flex flex-col items-center justify-center absolute top-1/2 left-1/2">
+            <span class="text-center font-bold h3 mb-2">Failed</span>
+            <button on:click={() => dispatch("close")} class="btn variant-filled-primary">Close</button>
+        </div>
+    {/if}
+
+    {#if isFinished}
+        <div class="w-40 h-40 card flex flex-col items-center justify-center absolute top-1/2 left-1/2">
+            <span class="text-center font-bold h3 mb-2">Finished</span>
+            <button on:click={() => dispatch("close")} class="btn variant-filled-primary">Close</button>
+        </div>
+    {/if}
 </div>

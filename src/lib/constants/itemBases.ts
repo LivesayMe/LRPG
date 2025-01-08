@@ -1,5 +1,6 @@
 import { Affix, Item, ItemType } from "../item";
 import { type Player } from "../player";
+import { Damage, DamageType } from "../damage";
 
 const generateArmors = (level) => {
     return [
@@ -351,8 +352,11 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.physicalAttack.min += 1
-                item.physicalAttack.max += 4
+                item.playerEffect.push((player: Player) => {
+                    if (player.weapon1 != null) {
+                        player.weapon1.addDamage(1, DamageType.PHYSICAL);
+                    }
+                })
             },
             friendlyName: () => "+1-4 Physical Attack",
             itemRestriction: [ItemType.Ring],
@@ -417,11 +421,12 @@ const beltBases = [
 const weaponBases = [
     new Item({
         name: "Short Sword",
-        physicalAttack: {min: 5, max: 10},
+        damage: new Damage({amount: 5, type: DamageType.PHYSICAL}),
         levelRequirement: 1,
         strengthRequirement: 12,
-        type: ItemType.Weapon,
+        type: ItemType.Sword,
         baseAttackTime: 1000,
+        criticalHitChance: .05,
     })
 ]
 const jewelleryBases = [

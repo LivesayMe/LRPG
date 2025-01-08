@@ -1,5 +1,6 @@
 import { Entity } from "./entity";
 import { meleeSkills, Skill } from "./skill";
+import { Damage, DamageType } from "./damage";
 
 class Enemy extends Entity {
     constructor(args: {
@@ -17,6 +18,13 @@ class Enemy extends Entity {
         accuracyRating?: number;
     }) {
         super(args);
+    }
+
+    getAttackDamage() {
+        return new Damage({
+            type: DamageType.PHYSICAL,
+            amount: 5 * this.level,
+        })
     }
 }
 

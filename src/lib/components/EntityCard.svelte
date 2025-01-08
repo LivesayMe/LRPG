@@ -97,7 +97,7 @@
 
     <div class="flex flex-row justify-between">
         <span>
-            {entity.name}
+            {entity.name} / {entity.id}
         </span>
         <span class="flex flex-row gap-2 [&>*]:pointer-events-none" use:popup={{
             event: 'hover',

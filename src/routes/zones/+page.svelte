@@ -149,6 +149,20 @@
 
         return [zones, edges];
     }
+
+    function updateZoneStatuses(e: { detail: Zone; }) {
+        const zone: Zone = e.detail;
+        console.log(zone);
+        zone.exploration_status = ExplorationStatus.FULLY_EXPLORED;
+        //All zones adjacent to a fullly explored zone should be discovered
+        zone.connectedZones.forEach(zoneId => {
+            const adjacentZone = worldZones.find(zone => zone.id === zoneId);
+            if (adjacentZone.exploration_status == ExplorationStatus.UNDISCOVERED) {
+                adjacentZone.exploration_status = ExplorationStatus.UNEXPLORED;
+                console.log(adjacentZone.name, " discovered");
+            }
+        })
+    }
     
     let characters = [generateRandomPlayer(), 
                         generateRandomPlayer(),
@@ -177,7 +191,10 @@
 <div class="w-screen h-[calc(100vh-82px)] flex flex-row">
     <div class="h-full flex-1">
         {#if isExploringZone && selectedZone}
-            <ZoneExploration zone={selectedZone} activeCharacters={characters} on:close={() => isExploringZone = false}/>
+            <ZoneExploration zone={selectedZone} activeCharacters={characters} on:close={() => isExploringZone = false} on:explored={(e) => {
+                updateZoneStatuses(e)
+                characters.forEach(character => character.fullHeal());
+            }}/>
         {:else}
             <World bind:zones={worldZones} bind:edges={worldEdges} on:zoneSelected={(e) => {selectedZone = e.detail; isExploringZone = true}}/>
         {/if}

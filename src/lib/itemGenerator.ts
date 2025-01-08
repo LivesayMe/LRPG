@@ -1,5 +1,5 @@
-import { Item, Rarity, ItemType } from "./item";
-import { affixes } from "./constants/affixList";
+import { Item, Rarity, ItemType, isArmor, isWeapon, isJewellery } from "./item";
+import { affixes, maxTier } from "./constants/affixList";
 import { weaponBases, armorBases, jewelleryBases } from "./constants/itemBases";
 import { generateName } from "./constants/itemNames";
 
@@ -42,7 +42,10 @@ function selectBase(pool: Item[], areaLevel: number): Item {
     const top3Bases = filteredBases.slice(0, 3);
     const randomBase = top3Bases[Math.floor(Math.random() * top3Bases.length)];
     //Create deep copy of base
-    return randomBase.copy();
+    const baseCopy = randomBase.copy();
+    baseCopy.level = areaLevel;
+
+    return baseCopy;
 }
 
 function addAffix(item: Item) {
@@ -64,7 +67,7 @@ function addAffix(item: Item) {
         }
     }
 
-    selectedAffix.tier = Math.floor(Math.random() * selectedAffix.maxTiers) + 1;
+    selectedAffix.tier = Math.floor(Math.random() * maxTier(item.level, selectedAffix)) + 1;
     item.affixes.push(selectedAffix);
 }
 
@@ -75,24 +78,25 @@ function addAffix(item: Item) {
  * @param type An optional parameter to only generate items of a certain type
  * @returns 
  */
-function generateItem(itemRarity: number, areaLevel: number, type: ItemType | null): Item {
+function generateItem(itemRarity: number, areaLevel: number, type: ItemType | ItemType[] | null): Item {
+    
     const generatedRarity: Rarity = generateRarity(itemRarity);
     if (generatedRarity === Rarity.Unique) {
         return new Item({type: ItemType.BodyArmor, rarity: Rarity.Unique}); // TODO: Generate unique item
     } else {
         let pool: Item[] = [];
         if (type != null) {
-            if (type === ItemType.BodyArmor || type === ItemType.Helmet || type === ItemType.Boots || type === ItemType.Gloves) {
-                pool = armorBases.filter(base => base.type === type);
-            } else if (type === ItemType.Ring || type === ItemType.Amulet || type === ItemType.Belt) {
-                pool = jewelleryBases.filter(base => base.type === type);
-            } else {
-                pool = weaponBases;
-            }
+            const selectedItemTypes: ItemType[] = Array.isArray(type) ? type : [type];
+            selectedItemTypes.forEach(t => {
+                if (isArmor(t)) pool = pool.concat(armorBases.filter(b => b.type === t));
+                if (isWeapon(t)) pool = pool.concat(weaponBases.filter(b => b.type === t));
+                if (isJewellery(t)) pool = pool.concat(jewelleryBases.filter(b => b.type === t));
+            })
         } else {
-            pool = armorBases.concat(jewelleryBases).concat(weaponBases);
+            pool = armorBases.concat(jewelleryBases).concat(weaponBases); //Can be anything
         }
         if (pool.length === 0) {
+            if (Array.isArray(type)) throw "Item pool is empty for types " + type.join(", ") + ", either the item base list is corrupted or the item types are invalid";
             throw "Item pool is empty for type " + ItemType[type ?? 0] + ", either the item base list is corrupted or the item type is invalid";
         }
         let item = selectBase(pool, areaLevel);

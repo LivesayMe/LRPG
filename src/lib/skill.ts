@@ -32,9 +32,9 @@ const meleeSkills = [
         "Basic Attack",
         "A basic melee attack.",
         (initiator, target) => {
+            const baseDamage = initiator.getAttackDamage();
             return new Damage({
-                type: DamageType.PHYSICAL,
-                amount: initiator.level * 5,
+                dealt: baseDamage.dealt,
                 initiator: initiator,
                 target: target,
             });

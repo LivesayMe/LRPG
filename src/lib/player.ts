@@ -2,9 +2,10 @@ import type { Item } from "./item";
 import {v4 as uuidv4} from 'uuid';
 import { baseClasses, BaseClass } from "./constants/classes";
 import { generateItem } from "./itemGenerator";
-import { Rarity, ItemType } from "./item";
+import { Rarity, ItemType, isWeapon } from "./item";
 import { Entity } from "./entity";
 import { meleeSkills } from "./skill";
+import { Damage, DamageType } from "./damage";
 
 class Player extends Entity {
 
@@ -126,11 +127,26 @@ class Player extends Entity {
         if (!this.weapon1)
             return 1000;
 
-        if (this.weapon2 != null && this.weapon2.type == ItemType.Weapon) {
+        if (this.weapon2 != null && isWeapon(this.weapon2.type)) { //Is our second weapon not a shield or quiver
             // Dual wielding
             return Math.min(this.weapon1.attackSpeed, this.weapon2.attackSpeed) * 1.35;
         }
         return this.weapon1.attackSpeed;
+    }
+
+    getAttackDamage(): Damage {
+        if (!this.weapon1)
+            return new Damage({ type: DamageType.PHYSICAL, amount: 5 }); // Punch!
+
+        const damage = this.weapon1.damage.copy();
+
+        //Check for critical strike
+        if (Math.random() < this.weapon1.criticalHitChance * this.incCriticalHitChance) {
+            //Multiple each damage by this.criticalHitMultiplier
+            damage.dealt.forEach((d) => d.amount *= this.criticalHitMultiplier);
+        }
+
+        return damage;
     }
 }
 
@@ -154,7 +170,7 @@ function generateRandomPlayer(): Player {
     player.ring2 = generateItem(.5, 1, ItemType.Ring);
     player.amulet = generateItem(.5, 1, ItemType.Amulet);
     player.belt = generateItem(.5, 1, ItemType.Belt);
-    player.weapon1 = generateItem(.5, 1, ItemType.Weapon);
+    player.weapon1 = generateItem(.5, 1, ItemType.Sword);
 
     player.applyItems();
 

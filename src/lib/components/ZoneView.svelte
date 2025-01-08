@@ -8,7 +8,7 @@
 </script>
 
 <div class="flex flex-col gap-2">
-    {#if zone.exploration_status != ExplorationStatus.UNDISCOVERED}
+    {#if zone.exploration_status == ExplorationStatus.UNEXPLORED}
         <button class="btn variant-filled" on:click={() => dispatch("zoneSelected", zone)}>Start Exploring</button>
     {/if}
     {#if zone.exploration_status == ExplorationStatus.FULLY_EXPLORED}
