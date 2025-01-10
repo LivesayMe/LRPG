@@ -7,6 +7,8 @@
     import { Zone, ExplorationStatus } from "$lib/zone";
     import { onMount } from "svelte";
     import { zoneRadius, worldPadding } from "$lib/constants/rendering";
+    import { inventory } from "$lib/stores/inventory";
+    import Inventory from "../../lib/components/Inventory.svelte";
     
     function hasCycle(edges: number[][]): boolean {
         // Helper function to find the root of a node using path compression
@@ -165,13 +167,15 @@
     }
     
     let characters = [generateRandomPlayer(), 
-                        generateRandomPlayer(),
-                        generateRandomPlayer()
+                        // generateRandomPlayer(),
+                        // generateRandomPlayer()
                     ];
     let selectedCharacterId = characters[0].id
 
     let isExploringZone = false;
     let selectedZone = null;
+    let isInventoryOpen = false;
+
 
     $: if (isExploringZone) {
         //Do something??
@@ -180,27 +184,45 @@
     let worldZones = [];
     let worldEdges = [];
 
+
     onMount(() => {
         const [zones, edges] = generateWorld();
         worldZones = zones;
         worldEdges = edges;
+
+        $inventory.items.push(characters[0].weapon1);
+        
+        console.log($inventory);
     })
 
 </script>
 
-<div class="w-screen h-[calc(100vh-82px)] flex flex-row">
-    <div class="h-full flex-1">
-        {#if isExploringZone && selectedZone}
-            <ZoneExploration zone={selectedZone} activeCharacters={characters} on:close={() => isExploringZone = false} on:explored={(e) => {
-                updateZoneStatuses(e)
-                characters.forEach(character => character.fullHeal());
-            }}/>
-        {:else}
-            <World bind:zones={worldZones} bind:edges={worldEdges} on:zoneSelected={(e) => {selectedZone = e.detail; isExploringZone = true}}/>
-        {/if}
-    </div>
+<div class="w-screen h-[calc(100vh-82px)] flex flex-row relative">
+    
+    {#if !isInventoryOpen}
+        <button class="absolute bottom-2 left-2 btn variant-filled-primary z-30" on:click={() => {
+            isInventoryOpen = !isInventoryOpen
+        }}>
+            Inventory
+        </button>
 
-    <div class="flex flex-col w-96 h-full bg-surface-500 border-l-2 overflow-y-hidden">
+        <div class="h-full flex-1">
+            {#if isExploringZone && selectedZone}
+                <ZoneExploration zone={selectedZone} activeCharacters={characters} on:close={() => {
+                    isExploringZone = false;
+                    characters.forEach(character => character.fullHeal());
+                }} on:explored={(e) => {
+                    updateZoneStatuses(e)
+                }}/>
+            {:else}
+                <World bind:zones={worldZones} bind:edges={worldEdges} on:zoneSelected={(e) => {selectedZone = e.detail; isExploringZone = true}}/>
+            {/if}
+        </div>
+    {:else}
+        <Inventory on:close={() => isInventoryOpen = false}/>
+    {/if}
+
+    <div class="flex flex-col w-[520px] h-full bg-surface-500 border-l-2 overflow-y-hidden">
         <TabGroup regionList="flex-wrap" regionPanel="overflow-y-auto h-[calc(100vh-140px)]">
             {#each characters as character}
                 <Tab bind:group={selectedCharacterId} name={character.id} value={character.id}>{character.name}</Tab>

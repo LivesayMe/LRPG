@@ -1,25 +1,37 @@
 import { Entity } from "./entity";
 import { Damage, DamageType } from "./damage";
+import { ItemType } from "./item";
 
 class Skill {
     name: string;
     level: number;
     description: string;
-    attack: (initiator: Entity, target: Entity) => Damage | null;
+    weaponRequirement: ItemType[] = [];
+    attack: (initiator: Entity, target: Entity, allEnemies?: Entity[], allAllies?: Entity[]) => Damage[] | null;
     attackSpeed: (initiator: Entity) => number;
+    dps: (initiator: Entity) => number;
 
-    constructor(name: string, description: string, attack: (initiator: Entity, target: Entity) => Damage, attackSpeed: (initiator: Entity) => number) {
+    constructor({name, description, attack, attackSpeed, dps = () => 0, weaponRequirement = []}: {
+        name: string;
+        description: string;
+        attack: (initiator: Entity, target: Entity, allEnemies?: Entity[], allAllies?: Entity[]) => Damage[] | null;
+        attackSpeed: (initiator: Entity) => number;
+        dps?: (initiator: Entity, attackSpeed: number) => number;
+        weaponRequirement?: ItemType[];
+    }) {
         this.name = name;
         this.level = 1;
         this.description = description;
-        this.attack = (initiator, target) => {
+        this.attack = (initiator, target, allEnemies, allAllies) => {
             if (isHit(initiator, target)) {
-                return attack(initiator, target);
+                return attack(initiator, target, allEnemies, allAllies);
             } else {
                 return null;
             }
         }
         this.attackSpeed = attackSpeed;
+        this.dps = (initiator: Entity) => dps(initiator, this.attackSpeed(initiator));
+        this.weaponRequirement = weaponRequirement;
     }
 }
 
@@ -27,22 +39,4 @@ const isHit = (initiator: Entity, target: Entity) => {
     return Math.random() < target.getEvasionChance(initiator.accuracyRating);
 }
 
-const meleeSkills = [
-    new Skill(
-        "Basic Attack",
-        "A basic melee attack.",
-        (initiator, target) => {
-            const baseDamage = initiator.getAttackDamage();
-            return new Damage({
-                dealt: baseDamage.dealt,
-                initiator: initiator,
-                target: target,
-            });
-        },
-        (initiator) => {
-            return initiator.getAttackSpeed() * 1.35;
-        }
-    )
-]
-
-export { Skill, meleeSkills };
+export { Skill };

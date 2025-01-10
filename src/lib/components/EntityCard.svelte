@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Entity } from "../entity";
     import { Damage } from "../damage";
-    import { ConicGradient, popup } from '@skeletonlabs/skeleton';
+    import { ConicGradient } from '@skeletonlabs/skeleton';
     import { fade, fly } from 'svelte/transition';
     import { cubicOut } from 'svelte/easing';
 
@@ -57,7 +57,18 @@
 
     $: showMessages(entity.eventDisplayQueue);
 
-    
+    let attackTimeTooltip: HTMLDivElement;
+    function popup(id: string) {
+        if (attackTimeTooltip) {
+            attackTimeTooltip.style.opacity = "1";
+        }
+    }
+
+    function closePopup() {
+        if (attackTimeTooltip) {
+            attackTimeTooltip.style.opacity = "0";
+        }
+    }
 </script>
 
 <style>
@@ -97,23 +108,22 @@
 
     <div class="flex flex-row justify-between">
         <span>
-            {entity.name} / {entity.id}
+            {entity.name}
         </span>
-        <span class="flex flex-row gap-2 [&>*]:pointer-events-none" use:popup={{
-            event: 'hover',
-            target: 'attackTimeTooltip' + (entity.id ?? 0),
-            placement: 'top',
-        }}>
-            {entity.mainSkill.name}
-            <ConicGradient stops={attackTimerGradient} width="w-6" height="h-6"/>
-        </span>
-        <!--TODO Make this tooltip not suck-->
-        <div data-popup={"attackTimeTooltip" + (entity.id ?? 0)}>
-            <div class="card p-2">
-                {Math.round(entity.getAttackSpeed() / 100) / 10}s / attack
+        <div class="relative">
+            <span class="flex flex-row gap-2 cursor-default z-20" on:mouseenter={() => popup("attackTimeTooltip" + (entity.id))} on:mouseleave={closePopup}>
+                {entity.mainSkill.name}
+                <ConicGradient stops={attackTimerGradient} width="w-6" height="h-6"/>
+            </span>
+
+            <div class="absolute opacity-0 -top-10 z-30" id="attackTimeTooltip{entity.id}" bind:this={attackTimeTooltip}>
+                <div class="card p-2">
+                    {Math.round(entity.getAttackSpeed() / 100) / 10}s / attack
+                </div>
             </div>
         </div>
     </div>
+    
 
     <div class="bg-red-500 justify-center flex" style="width: {entity.health / entity.maxHealth * 100}%">
         {Math.round(entity.health)}
@@ -123,4 +133,11 @@
             {Math.round(entity.energyShield)}
         </div>
     {/if}
+
+    <div class="flex flex-row gap-1">
+        {#each entity.statusEffects as statusEffect}
+            <div>{statusEffect.name}</div>
+        {/each}
+    </div>
 </div>
+

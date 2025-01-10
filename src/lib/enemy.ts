@@ -1,6 +1,7 @@
 import { Entity } from "./entity";
-import { meleeSkills, Skill } from "./skill";
+import { Skill } from "./skill";
 import { Damage, DamageType } from "./damage";
+import { meleeSkills } from "./constants/skillList";
 
 class Enemy extends Entity {
     constructor(args: {
@@ -30,14 +31,16 @@ class Enemy extends Entity {
 
 
 const enemyNames = ["Monkey", "Sanji", "Roronoa", "Shanks", "Nami", "Brook"];
-function generateEnemy(level: number): Enemy {
+function generateEnemy(level: number, position?: number): Enemy {
     const randomName = enemyNames[Math.floor(Math.random() * enemyNames.length)];
-    return new Enemy({
+    const enemy = new Enemy({
         name: randomName, 
         level: level,
-        maxHealth: 100 + level * 10,
+        maxHealth: 60 + level * 10,
         mainSkill: meleeSkills[Math.floor(Math.random() * meleeSkills.length)]
     });
+    enemy.position = position ?? 0;
+    return enemy;
 }
 
 export { generateEnemy, Enemy };

@@ -1,6 +1,7 @@
 import { generateName } from "./constants/itemNames";
 import { DamageType, Damage } from "./damage";
 import {type Player} from "./player";
+import { Affix } from "./affix";
 
 let itemCount = 0;
 class Item {
@@ -16,6 +17,7 @@ class Item {
      * The type of the item, which determines its category such as weapon, armor, etc.
      */
     type: ItemType;
+    armorType: ArmorType;
 
     baseEnergyShield: number = 0;
     energyShield: number;
@@ -44,6 +46,9 @@ class Item {
     intelligenceRequirement: number;
 
     levelRequirement: number;
+
+    //Assets
+    image_path: string;
 
     applyAffixes() {
         this.evasion = this.baseEvasion;
@@ -95,7 +100,9 @@ class Item {
             intelligenceRequirement: this.intelligenceRequirement,
             levelRequirement: this.levelRequirement,
             baseAttackTime: this.baseAttackTime,
-            level: this.level
+            level: this.level,
+            armorType: this.armorType,
+            image_path: this.image_path
         });
         newItem.applyAffixes();
         return newItem;
@@ -118,7 +125,9 @@ class Item {
         intelligenceRequirement?: number;
         levelRequirement?: number,
         baseAttackTime?: number,
-        level?: number
+        level?: number,
+        armorType?: ArmorType,
+        image_path?: string
     }) {
         this.name = args.name ?? generateName();
         this.id = itemCount++;
@@ -156,44 +165,10 @@ class Item {
         this.attackSpeed = this.baseAttackTime;
 
         this.level = args.level ?? 1;
-    }
-}
 
-let affixCount = 0;
-class Affix {
-    maxTiers: number;
-    priority: number;
-    effect: (item: Item, tier: number) => void;
-    friendlyName: (tier: number) => string;
-    itemRestriction: Array<ItemType>;
-    modWeight: number;
-    id: number;
-    tier: number;
+        this.armorType = args.armorType ?? ArmorType.NONE;
 
-    constructor(args: { maxTiers: number; 
-                        priority: number; 
-                        effect: (item: Item, tier: number) => void;
-                        friendlyName: (tier: number) => string;
-                        itemRestriction: Array<ItemType>;
-                        modWeight: number; }) {
-        this.maxTiers = args.maxTiers;
-        this.priority = args.priority;
-        this.effect = args.effect;
-        this.friendlyName = args.friendlyName;
-        this.itemRestriction = args.itemRestriction;
-        this.modWeight = args.modWeight;
-        this.id = affixCount++;
-    }
-
-    copy(): Affix {
-        return new Affix({
-            maxTiers: this.maxTiers,
-            priority: this.priority,
-            effect: this.effect,
-            friendlyName: this.friendlyName,
-            itemRestriction: this.itemRestriction,
-            modWeight: this.modWeight,
-        });
+        this.image_path = args.image_path ?? "";
     }
 }
 
@@ -223,6 +198,16 @@ enum ItemType {
     Wand
 }
 
+enum ArmorType {
+    DEXTERITY,
+    STRENGTH,
+    INTELLIGENCE,
+    DEXTERITY_AND_STRENGTH,
+    DEXTERITY_AND_INTELLIGENCE,
+    STRENGTH_AND_INTELLIGENCE,
+    NONE
+}
+
 function isWeapon(type: ItemType): boolean {
     return type >= ItemType.Axe && type <= ItemType.Wand;
 }
@@ -235,4 +220,4 @@ function isJewellery(type: ItemType): boolean {
     return type >= ItemType.Ring && type <= ItemType.Amulet;
 }
 
-export { Item, Affix, Rarity, ItemType, isWeapon, isArmor, isJewellery };
+export { Item, Rarity, ItemType, ArmorType, isWeapon, isArmor, isJewellery };

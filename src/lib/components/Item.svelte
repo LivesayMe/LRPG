@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { type Item, Rarity, ItemType, Affix, isWeapon } from '../item';
+    import { type Item, Rarity, ItemType, isWeapon } from '../item';
+    import { Affix } from '../affix';
     import { autoModeWatcher, popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from '@skeletonlabs/skeleton';
     import { DamageType } from '../damage';
@@ -28,16 +29,15 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class={rarityColor(item) + " card p-2" + " " + height + " " + width +
+<div class={rarityColor(item) + " card " + " " + height + " " + width +
             (item ? " cursor-pointer" : "")} use:popup={{
     event: 'hover',
     target: "popup" + (item?.id ?? -1),
     placement: 'left',
 }} on:click={() => {console.log(item)}}>
     {#if item}
-        <div class="flex flex-col">
-            {item.name}
-            {ItemType[item.type]}
+        <div class="flex flex-col w-full h-full">
+            <img src={item.image_path} alt={item.name} class="w-full h-full object-contain"/>
         </div>
     {:else}
         <div></div>
@@ -48,7 +48,8 @@
     <div class="card p-4 w-72">
         {#if item}
             <div class={"flex flex-col " + (item.affixes.length > 0 ? "mb-2 border-b-2 pb-2" : "")}>
-                <div>{item.id}</div>
+                <div>{item.name}</div>
+                <div>Item Level {item.level}</div>
                 {#if item.implicit}
                     <div>{item.implicit.friendlyName(0)}</div>
                 {/if}

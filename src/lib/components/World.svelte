@@ -49,6 +49,8 @@
     function rerender() {
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
         for (let i = 0; i < zones.length; i++) {
             drawZone(zones[i], ctx);
         }
@@ -88,8 +90,8 @@
 
             if (distance < zoneRadius) {
                 //Convert zone coordinates to world coordinates
-                const zoneX = zone.worldPosition[0] / canvas.width * canvasWidth + zoneRadius;
-                const zoneY = zone.worldPosition[1] / canvas.height * canvasHeight;
+                const zoneX = zone.worldPosition[0] / canvas.width * canvasWidth + zoneRadius + rect.left;
+                const zoneY = zone.worldPosition[1] / canvas.height * canvasHeight - 75;
 
                 hoverZone(zone, [zoneX, zoneY]);
                 isHovering = true;
@@ -113,8 +115,9 @@
 
 </script>
 
-<div class="w-full h-full flex justify-center">
-    <canvas bind:this={canvas} class="w-full h-full" width="1000" height="1000" on:mousemove={canvasHover}></canvas>
+<div class="w-full h-full flex justify-center relative">
+    <img src="/maps/zone1.avif" alt="Zone Map" class="w-full h-full object-fit top-0 left-0 absolute -z-10"/>
+    <canvas bind:this={canvas} class="h-full" width="1000" height="1000" on:mousemove={canvasHover}></canvas>
 
     {#if zonePopupLocation[0] > 0 && zonePopupLocation[1] > 0}
         <div class="absolute card p-2" style="left: {zonePopupLocation[0]}px; top: {zonePopupLocation[1] + 82}px">

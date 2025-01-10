@@ -39,6 +39,8 @@ function selectBase(pool: Item[], areaLevel: number): Item {
     //Select the top 3 bases with the highest level requirement 
     //not greater than the area level by 2
     const filteredBases = pool.filter(base => base.levelRequirement <= areaLevel + 2);
+    //Shuffle the bases
+    filteredBases.sort(() => Math.random() - 0.5);
     const top3Bases = filteredBases.slice(0, 3);
     const randomBase = top3Bases[Math.floor(Math.random() * top3Bases.length)];
     //Create deep copy of base
@@ -53,6 +55,12 @@ function addAffix(item: Item) {
     let filteredAffixes = affixes.filter(affix => 
         affix.itemRestriction.includes(item.type)
     ).filter(affix => !item.affixes.includes(affix));
+
+    if (isArmor(item.type)) {
+        filteredAffixes = filteredAffixes.filter(affix => 
+            affix.armorRestriction.includes(item.armorType) || affix.armorRestriction.length === 0
+        );
+    }
 
     if (filteredAffixes.length === 0) return;
     const totalModWeight = filteredAffixes.reduce((a, b) => a + b.modWeight, 0);

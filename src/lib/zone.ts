@@ -10,6 +10,8 @@ class Zone {
     hover: boolean = false;
     isLastZone: boolean = false;
 
+    biome
+
     constructor(name: string, worldPosition: number[], level: number) {
         this.name = name;
         this.worldPosition = worldPosition;
@@ -21,6 +23,11 @@ class Zone {
         if (this.connectedZones.includes(zoneId)) return;
         this.connectedZones.push(zoneId);
     }
+}
+
+enum BiomeType {
+    FOREST,
+    MOUNTAIN
 }
 
 enum ExplorationStatus {

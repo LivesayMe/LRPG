@@ -4,7 +4,7 @@ import { baseClasses, BaseClass } from "./constants/classes";
 import { generateItem } from "./itemGenerator";
 import { Rarity, ItemType, isWeapon } from "./item";
 import { Entity } from "./entity";
-import { meleeSkills } from "./skill";
+import { meleeSkills } from "./constants/skillList";
 import { Damage, DamageType } from "./damage";
 
 class Player extends Entity {
@@ -125,13 +125,13 @@ class Player extends Entity {
      */
     getAttackSpeed() {
         if (!this.weapon1)
-            return 1000;
+            return 1000 * this.actionSpeed;
 
         if (this.weapon2 != null && isWeapon(this.weapon2.type)) { //Is our second weapon not a shield or quiver
             // Dual wielding
-            return Math.min(this.weapon1.attackSpeed, this.weapon2.attackSpeed) * 1.35;
+            return Math.min(this.weapon1.attackSpeed, this.weapon2.attackSpeed) * 1.35  * this.actionSpeed;
         }
-        return this.weapon1.attackSpeed;
+        return this.weapon1.attackSpeed * this.actionSpeed;
     }
 
     getAttackDamage(): Damage {
@@ -171,6 +171,7 @@ function generateRandomPlayer(): Player {
     player.amulet = generateItem(.5, 1, ItemType.Amulet);
     player.belt = generateItem(.5, 1, ItemType.Belt);
     player.weapon1 = generateItem(.5, 1, ItemType.Sword);
+    player.gloves = generateItem(.5, 1, ItemType.Gloves);
 
     player.applyItems();
 

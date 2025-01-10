@@ -1,4 +1,5 @@
-import { Affix, Item, ItemType } from "../item";
+import { ArmorType, Item, ItemType } from "../item";
+import { Affix } from "../affix";
 import { type Player } from "../player";
 import { Damage, DamageType } from "../damage";
 
@@ -19,21 +20,27 @@ const generateArmors = (level) => {
             }),
             levelRequirement: level,
             strengthRequirement: 12 + level * 2,
-            type: ItemType.BodyArmor
+            type: ItemType.BodyArmor,
+            armorType: ArmorType.STRENGTH,
+            image_path: "/items/body_armor/plate_vest.avif"
         }),
         new Item({
             name: "Shabby Jerkin",
             evasion: 10 + level * 20,
             levelRequirement: level,
             dexterityRequirement: 12 + level * 2,
-            type: ItemType.BodyArmor
+            type: ItemType.BodyArmor,
+            armorType: ArmorType.DEXTERITY,
+            image_path: "/items/body_armor/shabby_jerkin.avif"
         }),
         new Item({
             name: "Simple Robe",
             energyShield: 10 + level * 5,
             levelRequirement: level,
             intelligenceRequirement: 12 + level * 2,
-            type: ItemType.BodyArmor
+            type: ItemType.BodyArmor,
+            armorType: ArmorType.INTELLIGENCE,
+            image_path: "/items/body_armor/simple_robe.avif"
         }),
 
         //Hybrid bases
@@ -44,7 +51,9 @@ const generateArmors = (level) => {
             levelRequirement: level,
             strengthRequirement: 7 + level * 1,
             dexterityRequirement: 7 + level * 1,
-            type: ItemType.BodyArmor
+            type: ItemType.BodyArmor,
+            armorType: ArmorType.DEXTERITY_AND_STRENGTH,
+            image_path: "/items/body_armor/scale_vest.avif"
         }),
         new Item({
             name: "Chainmail Vest",
@@ -53,7 +62,9 @@ const generateArmors = (level) => {
             levelRequirement: level,
             strengthRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.BodyArmor
+            type: ItemType.BodyArmor,
+            armorType: ArmorType.STRENGTH_AND_INTELLIGENCE,
+            image_path: "/items/body_armor/chainmail_vest.avif"
         }),
         new Item({
             name: "Padded Vest",
@@ -62,7 +73,9 @@ const generateArmors = (level) => {
             levelRequirement: level,
             dexterityRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.BodyArmor
+            type: ItemType.BodyArmor,
+            armorType: ArmorType.DEXTERITY_AND_INTELLIGENCE,
+            image_path: "/items/body_armor/padded_vest.avif"
         }),
     ];
 
@@ -74,19 +87,28 @@ const generateBoots = (level) => {
             name: "Iron Greaves",
             armor: 20 + level * 50,
             strengthRequirement: 12 + level * 2,
-            type: ItemType.Boots
+            type: ItemType.Boots,
+            armorType: ArmorType.STRENGTH,
+            image_path: "/items/boots/iron_greaves.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Leather Boots",
             evasion: 10 + level * 20,
             dexterityRequirement: 12 + level * 2,
-            type: ItemType.Boots
+            type: ItemType.Boots,
+            armorType: ArmorType.DEXTERITY,
+            image_path: "/items/boots/leather_boots.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Chain Boots",
             energyShield: 10 + level * 5,
             intelligenceRequirement: 12 + level * 2,
-            type: ItemType.Boots
+            type: ItemType.Boots,
+            armorType: ArmorType.INTELLIGENCE,
+            image_path: "/items/boots/chain_boots.avif",
+            levelRequirement: level
         }),
         //Hybrid bases
         new Item({
@@ -95,7 +117,10 @@ const generateBoots = (level) => {
             evasion: 10 + level * 20,
             strengthRequirement: 7 + level * 1,
             dexterityRequirement: 7 + level * 1,
-            type: ItemType.Boots
+            type: ItemType.Boots,
+            armorType: ArmorType.DEXTERITY_AND_STRENGTH,
+            image_path: "/items/boots/leatherscale_boots.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Chainmail Boots",
@@ -103,7 +128,10 @@ const generateBoots = (level) => {
             energyShield: 10 + level * 5,
             strengthRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.Boots
+            type: ItemType.Boots,
+            armorType: ArmorType.STRENGTH_AND_INTELLIGENCE,
+            image_path: "/items/boots/chainmail_boots.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Padded Boots",
@@ -111,7 +139,10 @@ const generateBoots = (level) => {
             energyShield: 10 + level * 5,
             dexterityRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.Boots
+            type: ItemType.Boots,
+            armorType: ArmorType.DEXTERITY_AND_INTELLIGENCE,
+            image_path: "/items/boots/padded_boots.avif",
+            levelRequirement: level
         }),
     ]
 }
@@ -122,19 +153,28 @@ const generateGloves = (level) => {
             name: "Iron Gauntlets",
             armor: 20 + level * 50,
             strengthRequirement: 12 + level * 2,
-            type: ItemType.Gloves
+            type: ItemType.Gloves,
+            armorType: ArmorType.STRENGTH,
+            levelRequirement: level,
+            image_path: "/items/gloves/iron_gauntlets.avif"
         }),
         new Item({
             name: "Leather Gloves",
             evasion: 10 + level * 20,
             dexterityRequirement: 12 + level * 2,
-            type: ItemType.Gloves
+            type: ItemType.Gloves,
+            armorType: ArmorType.DEXTERITY,
+            levelRequirement: level,
+            image_path: "/items/gloves/leather_gloves.avif"
         }),
         new Item({
             name: "Chain Gloves",
             energyShield: 10 + level * 5,
             intelligenceRequirement: 12 + level * 2,
-            type: ItemType.Gloves
+            type: ItemType.Gloves,
+            armorType: ArmorType.INTELLIGENCE,
+            levelRequirement: level,
+            image_path: "/items/gloves/chain_gloves.avif"
         }),
         //Hybrid bases
         new Item({
@@ -143,7 +183,10 @@ const generateGloves = (level) => {
             evasion: 10 + level * 20,
             strengthRequirement: 7 + level * 1,
             dexterityRequirement: 7 + level * 1,
-            type: ItemType.Gloves
+            type: ItemType.Gloves,
+            armorType: ArmorType.DEXTERITY_AND_STRENGTH,
+            levelRequirement: level,
+            image_path: "/items/gloves/leatherscale_gloves.avif"
         }),
         new Item({
             name: "Chainmail Gloves",
@@ -151,7 +194,10 @@ const generateGloves = (level) => {
             energyShield: 10 + level * 5,
             strengthRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.Gloves
+            type: ItemType.Gloves,
+            armorType: ArmorType.STRENGTH_AND_INTELLIGENCE,
+            levelRequirement: level,
+            image_path: "/items/gloves/chainmail_gloves.avif"
         }),
         new Item({
             name: "Padded Gloves",
@@ -159,7 +205,10 @@ const generateGloves = (level) => {
             energyShield: 10 + level * 5,
             dexterityRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.Gloves
+            type: ItemType.Gloves,
+            armorType: ArmorType.DEXTERITY_AND_INTELLIGENCE,
+            levelRequirement: level,
+            image_path: "/items/gloves/padded_gloves.avif"
         }),
     ]
 }
@@ -170,19 +219,28 @@ const generateHelmets = (level) => {
             name: "Iron Helm",
             armor: 20 + level * 50,
             strengthRequirement: 12 + level * 2,
-            type: ItemType.Helmet
+            type: ItemType.Helmet,
+            armorType: ArmorType.STRENGTH,
+            image_path: "/items/helmets/iron_helm.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Leather Helm",
             evasion: 10 + level * 20,
             dexterityRequirement: 12 + level * 2,
-            type: ItemType.Helmet
+            type: ItemType.Helmet,
+            armorType: ArmorType.DEXTERITY,
+            image_path: "/items/helmets/leather_helm.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Chain Helm",
             energyShield: 10 + level * 5,
             intelligenceRequirement: 12 + level * 2,
-            type: ItemType.Helmet
+            type: ItemType.Helmet,
+            armorType: ArmorType.INTELLIGENCE,
+            image_path: "/items/helmets/chain_helm.avif",
+            levelRequirement: level
         }),
         //Hybrid bases
         new Item({
@@ -191,7 +249,10 @@ const generateHelmets = (level) => {
             evasion: 10 + level * 20,
             strengthRequirement: 7 + level * 1,
             dexterityRequirement: 7 + level * 1,
-            type: ItemType.Helmet
+            type: ItemType.Helmet,
+            armorType: ArmorType.DEXTERITY_AND_STRENGTH,
+            image_path: "/items/helmets/leatherscale_helm.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Chainmail Helm",
@@ -199,7 +260,10 @@ const generateHelmets = (level) => {
             energyShield: 10 + level * 5,
             strengthRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.Helmet
+            type: ItemType.Helmet,
+            armorType: ArmorType.STRENGTH_AND_INTELLIGENCE,
+            image_path: "/items/helmets/chainmail_helm.avif",
+            levelRequirement: level
         }),
         new Item({
             name: "Padded Helm",
@@ -207,7 +271,10 @@ const generateHelmets = (level) => {
             energyShield: 10 + level * 5,
             dexterityRequirement: 7 + level * 1,
             intelligenceRequirement: 7 + level * 1,
-            type: ItemType.Helmet
+            type: ItemType.Helmet,
+            armorType: ArmorType.DEXTERITY_AND_INTELLIGENCE,
+            image_path: "/items/helmets/padded_helm.avif",
+            levelRequirement: level
         }),
     ]
 }
@@ -277,14 +344,15 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.coldResistance += 30})
+                item.playerEffect.push((player: Player) => {player.resistance[DamageType.COLD] += 30})
             },
             friendlyName: () => "+30 Cold Resistance",
             itemRestriction: [ItemType.Ring],
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Ring
+        type: ItemType.Ring,
+        image_path: "/items/rings/saphire_ring.avif"
     }),
     new Item({
         name: "Topaz Ring",
@@ -292,14 +360,15 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.lightningResistance += 30})
+                item.playerEffect.push((player: Player) => {player.resistance[DamageType.LIGHTNING] += 30})
             },
             friendlyName: () => "+30 Lightning Resistance",
             itemRestriction: [ItemType.Ring],
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Ring
+        type: ItemType.Ring,
+        image_path: "/items/rings/topaz_ring.avif"
     }),
     new Item({
         name: "Ruby Ring",
@@ -307,14 +376,15 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.fireResistance += 30})
+                item.playerEffect.push((player: Player) => {player.resistance[DamageType.FIRE] += 30})
             },
             friendlyName: () => "+30 Fire Resistance",
             itemRestriction: [ItemType.Ring],
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Ring
+        type: ItemType.Ring,
+        image_path: "/items/rings/ruby_ring.avif"
     }),
     new Item({
         name: "Amethyst Ring",
@@ -322,14 +392,15 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.chaosResistance += 30})
+                item.playerEffect.push((player: Player) => {player.resistance[DamageType.CHAOS] += 30})
             },
             friendlyName: () => "+30 Chaos Resistance",
             itemRestriction: [ItemType.Ring],
             modWeight: 1000
         }),
         levelRequirement: 21,
-        type: ItemType.Ring
+        type: ItemType.Ring,
+        image_path: "/items/rings/amethyst_ring.avif"
     }), 
     new Item({
         name: "Coral Ring",
@@ -344,7 +415,8 @@ const ringBases = [
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Ring
+        type: ItemType.Ring,
+        image_path: "/items/rings/coral_ring.avif"
     }),
     new Item({
         name: "Iron Ring",
@@ -363,7 +435,8 @@ const ringBases = [
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Ring
+        type: ItemType.Ring,
+        image_path: "/items/rings/iron_ring.avif"
     }),
     new Item({
         name: "Paua Ring",
@@ -378,7 +451,8 @@ const ringBases = [
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Ring
+        type: ItemType.Ring,
+        image_path: "/items/rings/paua_ring.avif"
     })
 ]
 
@@ -396,7 +470,8 @@ const amuletBases = [
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Amulet
+        type: ItemType.Amulet,
+        image_path: "/items/amulets/jade_amulet.avif"
     })
 ]
 
@@ -414,7 +489,26 @@ const beltBases = [
             modWeight: 1000
         }),
         levelRequirement: 1,
-        type: ItemType.Belt
+        type: ItemType.Belt,
+        armorType: ArmorType.DEXTERITY,
+        image_path: "/items/belts/leather_belt.avif"
+    }),
+    new Item({
+        name: "Chain Belt",
+        implicit: new Affix({
+            maxTiers: 1,
+            priority: 0,
+            effect: (item: Item) => {
+                item.playerEffect.push((player: Player) => {player.maxEnergyShield += 30})
+            },
+            friendlyName: () => "+30 Maximum Energy Shield",
+            itemRestriction: [ItemType.Belt],
+            modWeight: 1000
+        }),
+        levelRequirement: 1,
+        type: ItemType.Belt,
+        armorType: ArmorType.INTELLIGENCE,
+        image_path: "/items/belts/chain_belt.avif"
     })
 ]
 
@@ -427,6 +521,7 @@ const weaponBases = [
         type: ItemType.Sword,
         baseAttackTime: 1000,
         criticalHitChance: .05,
+        image_path: "/items/swords/rusted_short_sword.avif"
     })
 ]
 const jewelleryBases = [

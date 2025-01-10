@@ -2,6 +2,7 @@
     import Item from "./Item.svelte";
     import { onMount } from "svelte";
     import { type Player } from "../player";
+    import { DamageType } from "../damage";
     export let character: Player;
 
     function truncateName(name: string): string {
@@ -15,7 +16,7 @@
     ]
 
     onMount(() => {
-        console.log(character);
+        // console.log(character);
     })
 </script>
 
@@ -56,19 +57,19 @@
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Lightning Resist</div>
-                    <div>{character.lightningResistance}</div>
+                    <div>{character.resistance[DamageType.LIGHTNING]}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Cold Resist</div>
-                    <div>{character.coldResistance}</div>
+                    <div>{character.resistance[DamageType.COLD]}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Fire Resist</div>
-                    <div>{character.fireResistance}</div>
+                    <div>{character.resistance[DamageType.FIRE]}</div>
                 </div>
                 <div class="flex flex-row justify-between">
                     <div class="font-bold">Chaos Resist</div>
-                    <div>{character.chaosResistance}</div>
+                    <div>{character.resistance[DamageType.CHAOS]}</div>
                 </div>
             </div>
         </div>
@@ -77,23 +78,23 @@
         <span class="font-bold -mb-2">Gear</span>
         <div class="flex flex-row gap-2 w-full">
             <div class="flex flex-col gap-4 w-1/3">
-                <Item item={character.weapon1} width="w-full" height="h-60"/>
-                <Item item={character.gloves} width="w-full" height="h-24"/>
+                <Item item={character.weapon1} width="w-full" height="h-[305px]"/>
+                <Item item={character.gloves} width="w-full" height="h-32"/>
             </div>
             <div class="flex flex-col gap-2 w-1/3">
-                <Item item={character.helmet} width="w-full" height="h-24"/>
-                <Item item={character.body_armor} width="w-full" height="h-48"/>
-                <Item item={character.belt} width="w-full" height="h-12"/>
+                <Item item={character.helmet} width="w-full" height="h-32"/>
+                <Item item={character.body_armor} width="w-full" height="h-56"/>
+                <Item item={character.belt} width="w-full" height="h-20"/>
             </div>
             <div class="flex flex-col gap-4 w-1/3">
-                <Item item={character.weapon2} width="w-full" height="h-60"/>
-                <Item item={character.boots} width="w-full" height="h-24"/>
+                <Item item={character.weapon2} width="w-full" height="h-[305px]"/>
+                <Item item={character.boots} width="w-full" height="h-32"/>
             </div>
         </div>
-        <div class="flex flex-row w-full justify-center gap-2 -mt-2">
-            <Item item={character.ring1} width="w-16" height="h-16"/>
-            <Item item={character.amulet} width="w-16" height="h-16"/>
-            <Item item={character.ring2} width="w-16" height="h-16"/>
+        <div class="flex flex-row w-full justify-center gap-10 -mt-2">
+            <Item item={character.ring1} width="w-20" height="h-20"/>
+            <Item item={character.amulet} width="w-20" height="h-20"/>
+            <Item item={character.ring2} width="w-20" height="h-20"/>
         </div>
 
         <!-- Skill Tree Button -->
@@ -101,13 +102,17 @@
 
         <!-- Skills -->
         <span class="font-bold -mb-2">Skills</span>
-        <div class="flex flex-col w-full gap-2">
-            {#each testSkills as skill}
-                <div class="card flex flex-row justify-between w-full p-2">
-                    <div>{skill.name}</div>
-                    <div>Level {skill.level}</div>
-                </div>
-            {/each}
+        <div class="flex flex-col w-full gap-4 card p-2">
+            <div class="flex flex-row justify-between w-full ">
+                <div>{character.mainSkill.name}</div>
+                <div>Level {character.mainSkill.level}</div>
+            </div>
+            <div>
+                {character.mainSkill.description}
+            </div>
+            <div>
+                Estimated dps: {Math.round(character.mainSkill.dps(character) * 10) / 10}
+            </div>
         </div>
     </div>
 {/if}
