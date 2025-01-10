@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TabGroup, Tab } from "@skeletonlabs/skeleton";
+    import { TabGroup, Tab, getToastStore } from "@skeletonlabs/skeleton";
     import Character from "$lib/components/Character.svelte";
     import ZoneExploration from "$lib/components/ZoneExploration.svelte";
     import World from "$lib/components/World.svelte";
@@ -7,8 +7,10 @@
     import { Zone, ExplorationStatus } from "$lib/zone";
     import { onMount } from "svelte";
     import { zoneRadius, worldPadding } from "$lib/constants/rendering";
-    import { inventory } from "$lib/stores/inventory";
     import Inventory from "../../lib/components/Inventory.svelte";
+    import {inventory} from "$lib/stores/inventory";
+
+    const toastStore = getToastStore();
     
     function hasCycle(edges: number[][]): boolean {
         // Helper function to find the root of a node using path compression
@@ -165,6 +167,14 @@
             }
         })
     }
+
+    function addItemToInventory(item) {
+        $inventory.items.push(item);
+        toastStore.trigger({
+            message: "Item added to inventory",
+            background: "variant-filled-success",
+        })
+    }
     
     let characters = [generateRandomPlayer(), 
                         // generateRandomPlayer(),
@@ -195,6 +205,12 @@
         console.log($inventory);
     })
 
+    let selectedItem = null;
+
+    function selectItem(item) {
+        selectedItem = item;
+    }
+
 </script>
 
 <div class="w-screen h-[calc(100vh-82px)] flex flex-row relative">
@@ -205,22 +221,27 @@
         }}>
             Inventory
         </button>
-
-        <div class="h-full flex-1">
-            {#if isExploringZone && selectedZone}
-                <ZoneExploration zone={selectedZone} activeCharacters={characters} on:close={() => {
-                    isExploringZone = false;
-                    characters.forEach(character => character.fullHeal());
-                }} on:explored={(e) => {
-                    updateZoneStatuses(e)
-                }}/>
-            {:else}
-                <World bind:zones={worldZones} bind:edges={worldEdges} on:zoneSelected={(e) => {selectedZone = e.detail; isExploringZone = true}}/>
-            {/if}
-        </div>
-    {:else}
-        <Inventory on:close={() => isInventoryOpen = false}/>
     {/if}
+    {#if isInventoryOpen}
+        <div class="absolute top-0 left-0 w-[calc(100vw-520px)] h-full z-20 bg-black/50">
+            <Inventory on:close={() => isInventoryOpen = false} on:itemSelected={(e) => selectItem(e.detail)} selectedItem={selectedItem}/>
+        </div>
+    {/if}
+
+    <div class="h-full flex-1">
+        {#if isExploringZone && selectedZone}
+            <ZoneExploration zone={selectedZone} activeCharacters={characters} on:close={() => {
+                isExploringZone = false;
+                characters.forEach(character => character.fullHeal());
+            }} on:explored={(e) => {
+                updateZoneStatuses(e)
+            }} on:addItem={(e) => addItemToInventory(e.detail)}/>
+        {:else}
+            <World bind:zones={worldZones} bind:edges={worldEdges} on:zoneSelected={(e) => {selectedZone = e.detail; isExploringZone = true}}/>
+        {/if}
+    </div>
+    
+
 
     <div class="flex flex-col w-[520px] h-full bg-surface-500 border-l-2 overflow-y-hidden">
         <TabGroup regionList="flex-wrap" regionPanel="overflow-y-auto h-[calc(100vh-140px)]">
@@ -228,7 +249,7 @@
                 <Tab bind:group={selectedCharacterId} name={character.id} value={character.id}>{character.name}</Tab>
             {/each}
             <svelte:fragment slot="panel">
-                <Character character={characters.find(c => c.id === selectedCharacterId)} />
+                <Character character={characters.find(c => c.id === selectedCharacterId)} on:itemSelected={(e) => selectItem(e.detail)} selectedItem={selectedItem}/>
             </svelte:fragment>
         </TabGroup>
     </div>

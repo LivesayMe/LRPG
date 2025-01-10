@@ -1,9 +1,12 @@
 <script lang="ts">
     import Item from "./Item.svelte";
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { type Player } from "../player";
     import { DamageType } from "../damage";
+    import { meleeSkills } from "../constants/skillList";
     export let character: Player;
+
+    const dispatch = createEventDispatcher();
 
     function truncateName(name: string): string {
         return name.length > 10 ? name.slice(0, 10) + "..." : name;
@@ -78,30 +81,35 @@
         <span class="font-bold -mb-2">Gear</span>
         <div class="flex flex-row gap-2 w-full">
             <div class="flex flex-col gap-4 w-1/3">
-                <Item item={character.weapon1} width="w-full" height="h-[305px]"/>
-                <Item item={character.gloves} width="w-full" height="h-32"/>
+                <Item item={character.weapon1} width="w-full" height="h-[305px]" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
+                <Item item={character.gloves} width="w-full" height="h-32" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
             </div>
             <div class="flex flex-col gap-2 w-1/3">
-                <Item item={character.helmet} width="w-full" height="h-32"/>
-                <Item item={character.body_armor} width="w-full" height="h-56"/>
-                <Item item={character.belt} width="w-full" height="h-20"/>
+                <Item item={character.helmet} width="w-full" height="h-32" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
+                <Item item={character.body_armor} width="w-full" height="h-56" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
+                <Item item={character.belt} width="w-full" height="h-20" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
             </div>
             <div class="flex flex-col gap-4 w-1/3">
-                <Item item={character.weapon2} width="w-full" height="h-[305px]"/>
-                <Item item={character.boots} width="w-full" height="h-32"/>
+                <Item item={character.weapon2} width="w-full" height="h-[305px]" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
+                <Item item={character.boots} width="w-full" height="h-32" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
             </div>
         </div>
         <div class="flex flex-row w-full justify-center gap-10 -mt-2">
-            <Item item={character.ring1} width="w-20" height="h-20"/>
-            <Item item={character.amulet} width="w-20" height="h-20"/>
-            <Item item={character.ring2} width="w-20" height="h-20"/>
+            <Item item={character.ring1} width="w-20" height="h-20" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
+            <Item item={character.amulet} width="w-20" height="h-20" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
+            <Item item={character.ring2} width="w-20" height="h-20" on:click={() => dispatch("itemSelected", {item: character.weapon1})}/>
         </div>
 
         <!-- Skill Tree Button -->
-        <button class="btn variant-filled">Skill Tree</button>
+        <button class="btn variant-filled" disabled>Skill Tree</button>
 
         <!-- Skills -->
         <span class="font-bold -mb-2">Skills</span>
+        <select bind:value={character.mainSkill} class="select">
+            {#each meleeSkills as skill}
+                <option value={skill}>{skill.name}</option>
+            {/each}
+        </select>
         <div class="flex flex-col w-full gap-4 card p-2">
             <div class="flex flex-row justify-between w-full ">
                 <div>{character.mainSkill.name}</div>

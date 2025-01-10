@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import { type Item, Rarity, ItemType, isWeapon } from '../item';
     import { Affix } from '../affix';
     import { autoModeWatcher, popup } from '@skeletonlabs/skeleton';
@@ -10,6 +10,8 @@
 
     export let height: string = "h-fit";
     export let width: string = "w-40";
+
+    const dispatch = createEventDispatcher();
 
     const rarityColor = (item: Item) => {
         if (!item) return "";
@@ -34,7 +36,9 @@
     event: 'hover',
     target: "popup" + (item?.id ?? -1),
     placement: 'left',
-}} on:click={() => {console.log(item)}}>
+}} on:click={() => {
+    dispatch("itemSelected", item);
+}}>
     {#if item}
         <div class="flex flex-col w-full h-full">
             <img src={item.image_path} alt={item.name} class="w-full h-full object-contain"/>
@@ -45,7 +49,7 @@
 </div>
 
 <div data-popup={"popup" + (item?.id ?? 0)}>
-    <div class="card p-4 w-72">
+    <div class="card p-4 w-72 bg-surface-200 z-20">
         {#if item}
             <div class={"flex flex-col " + (item.affixes.length > 0 ? "mb-2 border-b-2 pb-2" : "")}>
                 <div>{item.name}</div>

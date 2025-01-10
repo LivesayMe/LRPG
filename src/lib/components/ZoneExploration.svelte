@@ -3,11 +3,12 @@
     import { Player } from "../player";
     import { createEventDispatcher, onMount } from "svelte";
     import { enemyCount, wavesPerZone } from "../constants/zoneScaling";
-    import { generateEnemy } from "../enemy";
+    import { Enemy, generateEnemy } from "../enemy";
     import { Crown } from 'lucide-svelte';
     import { popup } from '@skeletonlabs/skeleton';
     import { type Damage } from "../damage";
     import EntityCard from "./EntityCard.svelte";
+    import { generateItem } from "../itemGenerator";
 
     const dispatch = createEventDispatcher();
 
@@ -53,6 +54,13 @@
             isBoss: true
         })
         return tempWaves
+    }
+
+    function killedEnemy(enemy: Enemy) {
+        if (Math.random() < .2) {
+            const newItem = generateItem(.5, enemy.level);
+            dispatch("addItem", newItem);
+        }
     }
 
     onMount(() => {
@@ -144,6 +152,7 @@
             // Remove dead enemies
             for (let i = activeEnemies.length - 1; i >= 0; i--) {
                 if (activeEnemies[i].isDowned) {
+                    killedEnemy(activeEnemies[i]);
                     activeEnemies.splice(i, 1);
                 }
             }
@@ -208,7 +217,7 @@
         </div>
 
         {#if isFailed}
-            <div class="w-40 h-40 card flex flex-col items-center justify-center absolute top-1/2 left-1/2">
+            <div class="w-40 h-40 card flex flex-col items-center justify-center absolute p-2 top-1/2 left-1/2">
                 <span class="text-center font-bold h3 mb-2">Failed</span>
                 <button on:click={() => dispatch("close")} class="btn variant-filled-primary">Retreat For Now</button>
             </div>

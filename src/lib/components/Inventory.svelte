@@ -8,6 +8,8 @@
     let filterText = "";
     let filteredItems = $inventory.items;
 
+    export let selectedItem;
+
     function filterItems(filter) {
         
         let lowerFilter = filter.toLowerCase();
@@ -37,7 +39,7 @@
     </div>
     <div class="flex flex-wrap justify-center gap-10 mt-5">
         {#each filteredItems as item}
-            <Item {item} />
+            <Item {item} on:itemSelected={(e) => dispatch("itemSelected", e.detail)}/>
         {/each}
     </div>
 </div>

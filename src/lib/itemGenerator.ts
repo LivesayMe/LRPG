@@ -86,7 +86,7 @@ function addAffix(item: Item) {
  * @param type An optional parameter to only generate items of a certain type
  * @returns 
  */
-function generateItem(itemRarity: number, areaLevel: number, type: ItemType | ItemType[] | null): Item {
+function generateItem(itemRarity: number, areaLevel: number, type?: ItemType | ItemType[] | null): Item {
     
     const generatedRarity: Rarity = generateRarity(itemRarity);
     if (generatedRarity === Rarity.Unique) {
