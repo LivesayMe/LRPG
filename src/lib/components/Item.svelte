@@ -27,17 +27,21 @@
                 return "!bg-orange-500";
         }
     }
+
+    let isSelected = false;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class={rarityColor(item) + " card " + " " + height + " " + width +
-            (item ? " cursor-pointer" : "")} use:popup={{
+            (item ? " cursor-pointer" : "") + (isSelected ? " border-2 border-green-500 shadow-green-500 shadow-inner" : "")} 
+    use:popup={{
     event: 'hover',
     target: "popup" + (item?.id ?? -1),
     placement: 'left',
 }} on:click={() => {
     dispatch("itemSelected", item);
+    isSelected = !isSelected;
 }}>
     {#if item}
         <div class="flex flex-col w-full h-full">
