@@ -11,6 +11,10 @@
     export let selectedItem;
 
     function filterItems(filter) {
+        if (!filter) {
+            filteredItems = $inventory.items;
+            return;
+        }
         
         let lowerFilter = filter.toLowerCase();
         console.log(filter)
@@ -23,9 +27,11 @@
                 i.affixes.some(a => a.friendlyName().toLowerCase().includes(lowerFilter)) ||
                 ItemType[i.type].toLowerCase().includes(lowerFilter)
             );
-        }
+        }        
+    }
 
-        
+    $: if (selectedItem || !selectedItem) {
+        filterItems(filterText);
     }
 </script>
 
@@ -39,7 +45,7 @@
     </div>
     <div class="flex flex-wrap justify-center gap-10 mt-5">
         {#each filteredItems as item}
-            <Item {item} on:itemSelected={(e) => dispatch("itemSelected", e.detail)}/>
+            <Item {item} on:itemSelected={(e) => dispatch("itemSelected", e.detail)} highlight={selectedItem && (selectedItem?.id ?? -1) == item.id}/>
         {/each}
     </div>
 </div>

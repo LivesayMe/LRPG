@@ -7,6 +7,7 @@
     import { DamageType } from '../damage';
 
     export let item: Item;
+    export let highlight: boolean = false;
 
     export let height: string = "h-fit";
     export let width: string = "w-40";
@@ -29,18 +30,26 @@
     }
 
     let isSelected = false;
+
+    $: if(item && item.implicit) {
+        console.log(item);
+    }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class={rarityColor(item) + " card " + " " + height + " " + width +
-            (item ? " cursor-pointer" : "") + (isSelected ? " border-2 border-green-500 shadow-green-500 shadow-inner" : "")} 
+            (item ? " cursor-pointer" : "") + (highlight ? " border-2 border-green-500 shadow-green-500 shadow-inner" : "")} 
     use:popup={{
     event: 'hover',
     target: "popup" + (item?.id ?? -1),
     placement: 'left',
 }} on:click={() => {
-    dispatch("itemSelected", item);
+    if (isSelected) {
+        dispatch("itemSelected", null);
+    } else {
+        dispatch("itemSelected", item);
+    }
     isSelected = !isSelected;
 }}>
     {#if item}
@@ -56,7 +65,7 @@
     <div class="card p-4 w-72 bg-surface-200 z-20">
         {#if item}
             <div class={"flex flex-col " + (item.affixes.length > 0 ? "mb-2 border-b-2 pb-2" : "")}>
-                <div>{item.name}</div>
+                <div>{item.name} | {item.id}</div>
                 <div>Item Level {item.level}</div>
                 {#if item.implicit}
                     <div>{item.implicit.friendlyName(0)}</div>

@@ -220,4 +220,6 @@ function isJewellery(type: ItemType): boolean {
     return type >= ItemType.Ring && type <= ItemType.Amulet;
 }
 
-export { Item, Rarity, ItemType, ArmorType, isWeapon, isArmor, isJewellery };
+const meleeWeapons = [ItemType.Sword, ItemType.Stave, ItemType.Axe, ItemType.Sceptre, ItemType.Mace, ItemType.Dagger, ItemType.Claw]
+
+export { Item, Rarity, ItemType, ArmorType, isWeapon, isArmor, isJewellery, meleeWeapons };

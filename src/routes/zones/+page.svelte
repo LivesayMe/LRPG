@@ -9,6 +9,7 @@
     import { zoneRadius, worldPadding } from "$lib/constants/rendering";
     import Inventory from "../../lib/components/Inventory.svelte";
     import {inventory} from "$lib/stores/inventory";
+    import { generateItem } from "../../lib/itemGenerator";
 
     const toastStore = getToastStore();
     
@@ -168,12 +169,14 @@
         })
     }
 
-    function addItemToInventory(item) {
+    function addItemToInventory(item, triggerToast = true) {
         $inventory.items.push(item);
-        toastStore.trigger({
-            message: "Item added to inventory",
-            background: "variant-filled-success",
-        })
+        if (triggerToast) {
+            toastStore.trigger({
+                message: "Item added to inventory",
+                background: "variant-filled-success",
+            })
+        }
     }
     
     let characters = [generateRandomPlayer(), 
@@ -199,10 +202,13 @@
         const [zones, edges] = generateWorld();
         worldZones = zones;
         worldEdges = edges;
+        $inventory.items = [];
+        $inventory.items.push(generateItem(.5, 1));
+        $inventory.items.push(generateItem(.5, 1));
+        $inventory.items.push(generateItem(.5, 1));
+        $inventory.items.push(generateItem(.5, 1));
 
-        $inventory.items.push(characters[0].weapon1);
-        
-        console.log($inventory);
+        console.log($inventory.items)
     })
 
     let selectedItem = null;
@@ -249,7 +255,12 @@
                 <Tab bind:group={selectedCharacterId} name={character.id} value={character.id}>{character.name}</Tab>
             {/each}
             <svelte:fragment slot="panel">
-                <Character character={characters.find(c => c.id === selectedCharacterId)} on:itemSelected={(e) => selectItem(e.detail)} selectedItem={selectedItem}/>
+                <Character 
+                    character={characters.find(c => c.id === selectedCharacterId)} 
+                    on:itemSelected={(e) => selectItem(e.detail)} 
+                    selectedItem={selectedItem} 
+                    on:addItemToInventory={(e) => addItemToInventory(e.detail, false)} 
+                    on:removeItemFromInventory={(e) => $inventory.items = $inventory.items.filter(item => item.id !== e.detail.id)}/>
             </svelte:fragment>
         </TabGroup>
     </div>

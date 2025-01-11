@@ -1,11 +1,11 @@
 import { Skill } from "../skill";
 import { Damage, DamageType } from "../damage";
-import { ItemType } from "../item";
+import { ItemType, meleeWeapons } from "../item";
 import { StatusEffect } from "../statusEffect";
 import { ignite, chill } from "./statusEffectList";
 import { Entity } from "../entity";
 
-const meleeWeapons = [ItemType.Sword, ItemType.Stave, ItemType.Axe, ItemType.Sceptre, ItemType.Mace, ItemType.Dagger, ItemType.Claw]
+
 
 
 
