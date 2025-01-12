@@ -58,9 +58,9 @@ const statAffixes = [
         maxTiers: 4,
         priority: 3, //Happens after percent modifiers
         effect: (item: Item, tier: number) => {
-            item.playerEffect.push((player: Player) => {
+            item.playerEffect.push({effect: (player: Player) => {
                 player.maxEnergyShield *= 1.05 + (tier * 0.10);
-            })
+            }, priority: 0})
         },
         friendlyName: (tier: number) => `+${(5 + tier * 10)}% Global Energy Shield`,
         itemRestriction: jewellery,
@@ -148,7 +148,7 @@ const weaponAffixes = [
         maxTiers: 5,
         priority: 1,
         effect: (item: Item, tier: number) => {
-            item.playerEffect.push((player: Player) => {player.resistance[type] += 5 + tier * 5})
+            item.playerEffect.push({effect: (player: Player) => {player.resistance[type] += 5 + tier * 5}, priority: 0})
         },
         friendlyName: (tier: number) => `+${5 + tier * 5}% ${name} Resistance`,
         itemRestriction: everything,

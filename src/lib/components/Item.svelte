@@ -30,10 +30,6 @@
     }
 
     let isSelected = false;
-
-    $: if(item && item.implicit) {
-        console.log(item);
-    }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

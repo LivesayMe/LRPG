@@ -38,7 +38,7 @@ class Item {
     /**
      * Effects to be applied to the player when the item is equipped
      */
-    playerEffect: Array<(Player) => void> = [];
+    playerEffect: Array<{effect: (Player) => void, priority: number}> = [];
 
     //Requirements
     strengthRequirement: number;

@@ -6,6 +6,7 @@ import { Rarity, ItemType, isWeapon } from "./item";
 import { Entity } from "./entity";
 import { meleeSkills } from "./constants/skillList";
 import { Damage, DamageType } from "./damage";
+import { createPassiveTree, PassiveTree } from "./passiveTree";
 
 class Player extends Entity {
 
@@ -28,16 +29,20 @@ class Player extends Entity {
     lifeFromStrength = 1;
 
     //Gear
-    helmet: Item;
-    body_armor: Item;
-    boots: Item;
-    gloves: Item;
-    ring1: Item;
-    ring2: Item;
-    amulet: Item;
-    belt: Item;
-    weapon1: Item;
-    weapon2: Item;
+    helmet?: Item | null;
+    body_armor?: Item | null;
+    boots?: Item | null;
+    gloves?: Item | null;
+    ring1?: Item | null;
+    ring2?: Item | null;
+    amulet?: Item | null;
+    belt?: Item | null;
+    weapon1?: Item | null;
+    weapon2?: Item | null;
+
+    playerEffects: Array<{effect: (player: Player) => void, id: number, priority: number}> = [];
+
+    passiveTree: PassiveTree;
 
     resetStats() {
         //Reset stats to base values
@@ -63,35 +68,11 @@ class Player extends Entity {
         this.maxEnergyShield = this.getMaxEnergyShield();
         
 
-        if (this.helmet != null && this.helmet.playerEffect != null)
-            this.helmet.playerEffect.forEach(effect => effect(this));
-
-        if (this.body_armor != null && this.body_armor.playerEffect != null)
-            this.body_armor.playerEffect.forEach(effect => effect(this));
-
-        if (this.boots != null && this.boots.playerEffect != null)
-            this.boots.playerEffect.forEach(effect => effect(this));
-        
-        if (this.gloves != null && this.gloves.playerEffect != null)
-            this.gloves.playerEffect.forEach(effect => effect(this));
-        
-        if (this.ring1 != null && this.ring1.playerEffect != null)
-            this.ring1.playerEffect.forEach(effect => effect(this));
-
-        if (this.ring2 != null && this.ring2.playerEffect != null)    
-            this.ring2.playerEffect.forEach(effect => effect(this));
-
-        if (this.amulet != null && this.amulet.playerEffect != null)
-            this.amulet.playerEffect.forEach(effect => effect(this));
-
-        if (this.belt != null && this.belt.playerEffect != null)
-            this.belt.playerEffect.forEach(effect => effect(this));
-
-        if (this.weapon1 != null && this.weapon1.playerEffect != null)
-            this.weapon1.playerEffect.forEach(effect => effect(this));
-
-        if (this.weapon2 != null && this.weapon2.playerEffect != null)
-            this.weapon2.playerEffect.forEach(effect => effect(this));
+        //Sorted player effects
+        this.playerEffects.sort((a, b) => a.priority - b.priority);
+        for (let i = 0; i < this.playerEffects.length; i++) {
+            this.playerEffects[i].effect(this);
+        }
 
         this.energyShield = this.maxEnergyShield;
         this.energyShieldRegen = this.maxEnergyShield / 10;
@@ -101,19 +82,19 @@ class Player extends Entity {
     getEvasion() {
         return (this.helmet?.evasion ?? 0) + (this.body_armor?.evasion ?? 0) + (this.boots?.evasion ?? 0) +
                (this.ring1?.evasion ?? 0) + (this.ring2?.evasion ?? 0) + (this.amulet?.evasion ?? 0) + 
-               (this.belt?.evasion ?? 0) + this.evasionFromDexterity * this.dexterity;
+               (this.belt?.evasion ?? 0) + (this.gloves?.evasion ?? 0) + this.evasionFromDexterity * this.dexterity;
     }
 
     getArmor() {
         return (this.helmet?.armor ?? 0) + (this.body_armor?.armor ?? 0) + (this.boots?.armor ?? 0) +
                (this.ring1?.armor ?? 0) + (this.ring2?.armor ?? 0) + (this.amulet?.armor ?? 0) + 
-               (this.belt?.armor ?? 0);
+               (this.belt?.armor ?? 0) + (this.gloves?.armor ?? 0);
     }
 
     getMaxEnergyShield() {
         return (this.helmet?.energyShield ?? 0) + (this.body_armor?.energyShield ?? 0) + (this.boots?.energyShield ?? 0) +
                (this.ring1?.energyShield ?? 0) + (this.ring2?.energyShield ?? 0) + (this.amulet?.energyShield ?? 0) + 
-               (this.belt?.energyShield ?? 0) + this.intelligence * this.esFromIntelligence;
+               (this.belt?.energyShield ?? 0) + (this.gloves?.energyShield ?? 0) + this.intelligence * this.esFromIntelligence;
     }
 
     getMaxLife() {
@@ -148,6 +129,95 @@ class Player extends Entity {
 
         return damage;
     }
+
+    addItem(item: Item, disambiguator?: number) {
+        switch (item.type) {
+            case ItemType.BodyArmor:
+                this.body_armor = item;
+                break;
+            case ItemType.Helmet:
+                this.helmet = item;
+                break;
+            case ItemType.Boots:
+                this.boots = item;
+                break;
+            case ItemType.Gloves:
+                this.gloves = item;
+                break;
+            case ItemType.Ring:
+                if (disambiguator == 1) {
+                    this.ring1 = item;
+                } else {
+                    this.ring2 = item;
+                }
+                break;
+            case ItemType.Amulet:
+                this.amulet = item;
+                break;
+            case ItemType.Belt:
+                this.belt = item;
+                break;
+            default:
+                if (isWeapon(item.type)) {
+                    if (disambiguator == 1) {
+                        this.weapon1 = item;
+                    } else {
+                        this.weapon2 = item;
+                    }
+                }
+                break;
+        }
+        if (item.playerEffect != null) {
+            const newEffects = item.playerEffect.map(e => ({effect: e.effect, id: item.id, priority: e.priority}));
+            this.playerEffects.push(...newEffects);
+        }
+
+        this.applyItems();
+    }
+
+    removeItem(item: Item) {
+        switch (item.type) {
+            case ItemType.BodyArmor:
+                this.body_armor = null;
+                break;
+            case ItemType.Helmet:
+                this.helmet = null;
+                break;
+            case ItemType.Boots:
+                this.boots = null;
+                break;
+            case ItemType.Gloves:
+                this.gloves = null;
+                break;
+            case ItemType.Ring:
+                if (item.id == this.ring1?.id) {
+                    console.log(this.ring1.id);
+                    this.ring1 = null;
+                } else {
+                    this.ring2 = null;
+                }
+                break;
+            case ItemType.Amulet:
+                this.amulet = null;
+                break;
+            case ItemType.Belt:
+                this.belt = null;
+                break;
+            default:
+                if (isWeapon(item.type)) {
+                    if (item.id == this.weapon1?.id) {
+                        this.weapon1 = null;
+                    } else {
+                        this.weapon2 = null;
+                    }
+                }
+                break;
+        }
+
+        this.playerEffects = this.playerEffects.filter(e => e.id != item.id);
+
+        this.applyItems();
+    }
 }
 
 
@@ -162,20 +232,21 @@ function generateRandomPlayer(): Player {
 
     player.level = 1;
     player.experience = 0;
+    
+    player.addItem(generateItem(.5, 1, ItemType.Helmet));
+    player.addItem(generateItem(.5, 1, ItemType.BodyArmor));
+    player.addItem(generateItem(.5, 1, ItemType.Boots));
+    player.addItem(generateItem(.5, 1, ItemType.Gloves));
+    player.addItem(generateItem(.5, 1, ItemType.Ring), 1);
+    player.addItem(generateItem(.5, 1, ItemType.Ring), 2);
+    player.addItem(generateItem(.5, 1, ItemType.Amulet));
+    player.addItem(generateItem(.5, 1, ItemType.Belt));
 
-    player.helmet = generateItem(.5, 1, ItemType.Helmet);
-    player.body_armor = generateItem(.5, 1, ItemType.BodyArmor);
-    player.boots = generateItem(.5, 1, ItemType.Boots);
-    player.ring1 = generateItem(.5, 1, ItemType.Ring);
-    player.ring2 = generateItem(.5, 1, ItemType.Ring);
-    player.amulet = generateItem(.5, 1, ItemType.Amulet);
-    player.belt = generateItem(.5, 1, ItemType.Belt);
-    player.weapon1 = generateItem(.5, 1, ItemType.Sword);
-    player.gloves = generateItem(.5, 1, ItemType.Gloves);
-
-    player.applyItems();
+    player.addItem(generateItem(.5, 1, ItemType.Sword), 1);
 
     player.mainSkill = meleeSkills[Math.floor(Math.random() * meleeSkills.length)];
+
+    player.passiveTree = createPassiveTree();
 
     return player;
 }

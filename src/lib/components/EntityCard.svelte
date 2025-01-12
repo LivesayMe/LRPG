@@ -59,14 +59,17 @@
 
     let attackTimeTooltip: HTMLDivElement;
     function popup(id: string) {
+        console.log(id)
         if (attackTimeTooltip) {
             attackTimeTooltip.style.opacity = "1";
+            attackTimeTooltip.style.display = "block";
         }
     }
 
     function closePopup() {
         if (attackTimeTooltip) {
             attackTimeTooltip.style.opacity = "0";
+            attackTimeTooltip.style.display = "none";
         }
     }
 </script>
@@ -97,7 +100,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class={"card p-2 w-52 gap-1 flex flex-col relative" + (entity.isDowned ? "!bg-surface-500" : "")} on:click={() => {console.log(entity);}} bind:this={container}>
+<div class={"card p-2 w-52 gap-1 flex flex-col relative" + (entity.isDowned ? " !bg-surface-500" : "")} on:click={() => {console.log(entity);}} bind:this={container}>
     {#each messageElements as message}
         <div class="damage-number" style="left: {message.x}px; top: {message.y}px;">
             <div class="card p-2" style="background-color: {message.color}; color: {message.color === 'rgb(var(--color-surface-500))' ? 'white' : 'black'}">
@@ -116,8 +119,8 @@
                 <ConicGradient stops={attackTimerGradient} width="w-6" height="h-6"/>
             </span>
 
-            <div class="absolute opacity-0 -top-10 z-30" id="attackTimeTooltip{entity.id}" bind:this={attackTimeTooltip}>
-                <div class="card p-2">
+            <div class="absolute opacity-0 -top-14 z-30 hidden w-32 " id="attackTimeTooltip{entity.id}" bind:this={attackTimeTooltip}>
+                <div class="card p-2 w-full flex justify-center">
                     {Math.round(entity.getAttackSpeed() / 100) / 10}s / attack
                 </div>
             </div>

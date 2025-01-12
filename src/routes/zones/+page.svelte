@@ -207,8 +207,6 @@
         $inventory.items.push(generateItem(.5, 1));
         $inventory.items.push(generateItem(.5, 1));
         $inventory.items.push(generateItem(.5, 1));
-
-        console.log($inventory.items)
     })
 
     let selectedItem = null;

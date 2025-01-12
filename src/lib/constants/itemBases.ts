@@ -12,7 +12,7 @@ const generateArmors = (level) => {
                 maxTiers: 1,
                 priority: 0,
                 effect: (item: Item) => {
-                    item.playerEffect.push((player: Player) => {player.movementSpeed -= 0.03})
+                    item.playerEffect.push({effect: (player: Player) => {player.movementSpeed -= 0.03}, priority: 0})
                 },
                 friendlyName: () => "-3% Movement Speed",
                 itemRestriction: [ItemType.BodyArmor],
@@ -344,7 +344,7 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.resistance[DamageType.COLD] += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.resistance[DamageType.COLD] += 30}, priority: 0})
             },
             friendlyName: () => "+30 Cold Resistance",
             itemRestriction: [ItemType.Ring],
@@ -360,7 +360,7 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.resistance[DamageType.LIGHTNING] += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.resistance[DamageType.LIGHTNING] += 30}, priority: 0})
             },
             friendlyName: () => "+30 Lightning Resistance",
             itemRestriction: [ItemType.Ring],
@@ -376,7 +376,7 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.resistance[DamageType.FIRE] += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.resistance[DamageType.FIRE] += 30}, priority: 0})
             },
             friendlyName: () => "+30 Fire Resistance",
             itemRestriction: [ItemType.Ring],
@@ -392,7 +392,7 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.resistance[DamageType.CHAOS] += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.resistance[DamageType.CHAOS] += 30}, priority: 0})
             },
             friendlyName: () => "+30 Chaos Resistance",
             itemRestriction: [ItemType.Ring],
@@ -408,7 +408,7 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.maxHealth += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.maxHealth += 30}, priority: 0})
             },
             friendlyName: () => "+30 Maximum Health",
             itemRestriction: [ItemType.Ring],
@@ -424,11 +424,11 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {
+                item.playerEffect.push({effect: (player: Player) => {
                     if (player.weapon1 != null) {
                         player.weapon1.addDamage(1, DamageType.PHYSICAL);
                     }
-                })
+                }, priority: 0})
             },
             friendlyName: () => "+1-4 Physical Attack",
             itemRestriction: [ItemType.Ring],
@@ -444,7 +444,7 @@ const ringBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.maxMana += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.maxMana += 30}, priority: 0})
             },
             friendlyName: () => "+30 Maximum Mana",
             itemRestriction: [ItemType.Ring],
@@ -463,7 +463,7 @@ const amuletBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.dexterity += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.dexterity += 30}, priority: 0})
             },
             friendlyName: () => "+30 Dexterity",
             itemRestriction: [ItemType.Amulet],
@@ -482,7 +482,7 @@ const beltBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.maxHealth += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.maxHealth += 30}, priority: 0})
             },
             friendlyName: () => "+30 Maximum Health",
             itemRestriction: [ItemType.Belt],
@@ -499,7 +499,7 @@ const beltBases = [
             maxTiers: 1,
             priority: 0,
             effect: (item: Item) => {
-                item.playerEffect.push((player: Player) => {player.maxEnergyShield += 30})
+                item.playerEffect.push({effect: (player: Player) => {player.maxEnergyShield += 30}, priority: 0})
             },
             friendlyName: () => "+30 Maximum Energy Shield",
             itemRestriction: [ItemType.Belt],
